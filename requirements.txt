@@ -1,0 +1,5 @@
+discord.py
+pymongo
+Pillow
+python-dotenv
+easy-pil
