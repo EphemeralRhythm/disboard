@@ -6,9 +6,7 @@ import settings
 from models.schwi import Schwi
 from models.backend import Backend
 
-import asyncio
 logger = settings.logging.getLogger("bot")
-
 
 
 def run_backend(world):
@@ -19,21 +17,24 @@ def run_backend(world):
 def run_bot(world):
     bot = Schwi(world)
 
-    assert(settings.DISCORD_API_SECRET)
-    bot.run(settings.DISCORD_API_SECRET, root_logger=True)
+    assert settings.DISCORD_API_SECRET
+    bot.run(settings.DISCORD_API_SECRET)
 
 
 class ProcessManager(BaseManager):
     pass
 
-ProcessManager.register('World', World)
+
+ProcessManager.register("World", World)
 
 if __name__ == "__main__":
 
     with ProcessManager() as manager:
         world = manager.World()
 
-        game_backend_process = multiprocessing.Process(target=run_backend, args=(world,))
+        game_backend_process = multiprocessing.Process(
+            target=run_backend, args=(world,)
+        )
         discord_bot_process = multiprocessing.Process(target=run_bot, args=(world,))
 
         game_backend_process.start()

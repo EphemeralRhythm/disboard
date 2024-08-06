@@ -1,11 +1,10 @@
 import discord
-import utils.constants
-
 from discord.ext import commands
 from models.interface.character_creation_view import CharacterCreationView
+from utils.game import UNIT_COLORS, CLASSES
 
 
-class Account(commands.Cog):
+class Character(commands.Cog):
     def __init__(self, client):
         self.client = client
 
@@ -15,8 +14,8 @@ class Account(commands.Cog):
             await ctx.send("You already are a member of the game system.")
             return
 
-        await ctx.send(view= CharacterCreationView(ctx.author.id, self.client))
+        await ctx.send(view=CharacterCreationView(ctx.author.id, self.client))
 
 
-async def setup(client):
-    await client.add_cog(Account(client))
+def setup(client):
+    client.add_cog(Character(client))

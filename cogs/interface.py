@@ -1,7 +1,7 @@
 import discord
-import utils.constants
 from discord.ext import commands
 from modules.map_ui import draw_map
+
 
 class Interface(commands.Cog):
     def __init__(self, client):
@@ -22,8 +22,8 @@ class Interface(commands.Cog):
         print("Path: ", path)
         image.save(path)
 
-        await ctx.reply(file= discord.File(path))
+        await ctx.reply(file=discord.File(path))
 
 
-async def setup(client):
-    await client.add_cog(Interface(client))
+def setup(client):
+    client.add_cog(Interface(client))

@@ -1,15 +1,16 @@
 CLASSES = [
     # tanks
     "paladin",
-    "warrior", 
-    "druid", 
-
+    "warrior",
+    "druid",
     # dps
     "archer",
     "theif",
     "mage",
-    
     # support
     "priest",
-    "bishop"
+    "bishop",
 ]
+
+
+UNIT_COLORS = ["red", "blue", "green", "yellow", "orange"]

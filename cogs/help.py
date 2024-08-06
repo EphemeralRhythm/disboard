@@ -13,12 +13,10 @@ class Help(commands.Cog):
         embed = discord.Embed(title="Schwi Help", color=color)
         description = "Placeholder"
 
-        description += (
-            ""
-        )
+        description += ""
         embed.description = description
         await ctx.send(embed=embed)
 
 
-async def setup(client):
-    await client.add_cog(Help(client))
+def setup(client):
+    client.add_cog(Help(client))

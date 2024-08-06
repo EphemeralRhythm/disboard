@@ -1,4 +1,9 @@
-WARNING    - 2024-08-05 14:07:41,596 - client          : PyNaCl is not installed, voice will NOT be supported
-INFO       - 2024-08-05 14:07:41,598 - client          : logging in using static token
-INFO       - 2024-08-05 14:07:42,759 - gateway         : Shard ID None has connected to Gateway (Session ID: 89ac52cdbf44b9c57547aaf2d38d565f).
-INFO       - 2024-08-05 14:07:44,809 - schwi           : User: Schwi#1432 (ID: 899985748248367144)
+WARNING    - 2024-08-06 16:48:45,723 - client          : PyNaCl is not installed, voice will NOT be supported
+INFO       - 2024-08-06 16:48:45,724 - client          : logging in using static token
+INFO       - 2024-08-06 16:48:46,333 - gateway         : Shard ID None has sent the IDENTIFY payload.
+INFO       - 2024-08-06 16:48:46,553 - gateway         : Shard ID None has connected to Gateway: ["gateway-prd-us-east1-d-2371",{"micros":67990,"calls":["id_created",{"micros":1817,"calls":[]},"session_lookup_time",{"micros":3813,"calls":[]},"session_lookup_finished",{"micros":12,"calls":[]},"discord-sessions-prd-1-75",{"micros":60398,"calls":["start_session",{"micros":39544,"calls":["discord-api-rpc-78ffd557df-fqmqc",{"micros":36096,"calls":["get_user",{"micros":4589},"get_guilds",{"micros":2953},"send_scheduled_deletion_message",{"micros":7},"guild_join_requests",{"micros":5},"authorized_ip_coro",{"micros":7}]}]},"starting_guild_connect",{"micros":63,"calls":[]},"presence_started",{"micros":333,"calls":[]},"guilds_started",{"micros":149,"calls":[]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":20280,"calls":[]},"connect_finished",{"micros":20285,"calls":[]},"build_ready",{"micros":17,"calls":[]},"clean_ready",{"micros":1,"calls":[]},"optimize_ready",{"micros":0,"calls":[]},"split_ready",{"micros":1,"calls":[]}]}]}] (Session ID: 2ae2f952ae2efcc9d2fd9d4e59f3ee79).
+INFO       - 2024-08-06 16:48:48,701 - schwi           : User: Schwi#1432 (ID: 899985748248367144)
+INFO       - 2024-08-06 16:50:19,798 - client          : Cleaning up tasks.
+INFO       - 2024-08-06 16:50:19,798 - client          : Cleaning up after 1 tasks.
+INFO       - 2024-08-06 16:50:19,799 - client          : All tasks finished cancelling.
+INFO       - 2024-08-06 16:50:19,799 - client          : Closing the event loop.
