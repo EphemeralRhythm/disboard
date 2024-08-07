@@ -22,3 +22,8 @@ class MobAttackState(State):
             if not follow(entity, target):
                 self.Exit()
             return
+
+        entity.do_damage(target)
+
+        if target.take_damage_from_entity(entity):
+            self.Exit()

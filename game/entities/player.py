@@ -2,6 +2,7 @@ from game.entities.entity import Entity
 from PIL import Image
 
 from game.states.entityStates.moveState import MoveState
+from game.states.mobStates.mobAttackState import MobAttackState
 
 
 class Player(Entity):
@@ -17,7 +18,7 @@ class Player(Entity):
         self.size = (64, 64)
 
     def __repr__(self):
-        return super().__repr__()
+        return self.color + " " + self.player_class
 
     def draw(self, map_image):
         state = self.stateManager.currentState.name
@@ -44,9 +45,14 @@ class Player(Entity):
 
         map_image.paste(unit_image, (self.x - 12, self.y - 16), unit_image)
 
-    def move(self, x, y):
-        if self.stateManager.currentState.is_movement_locked:
-            return False
+    def is_ally(self, other_player):
+        return False
 
+    def is_movement_locked(self):
+        return self.stateManager.currentState.is_movement_locked
+
+    def move(self, x, y):
         self.stateManager.changeState(MoveState(self, x, y))
-        return True
+
+    def attack(self, target: Entity):
+        self.stateManager.changeState(MobAttackState(self, target))

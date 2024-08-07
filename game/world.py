@@ -1,3 +1,6 @@
+from collections import deque
+from game.command import Command
+
 import utils.database as db
 
 from game.cell import Cell
@@ -18,12 +21,15 @@ class World:
 
         self.players = {}
 
+        self.commands_queue = deque()
+
     def init_maps(self):
         for r in range(self.rows):
             for c in range(self.cols):
                 self.maps[r][c] = Cell(self, self.grid[r][c], r, c)
 
     def update(self):
+        self.handle_commands()
         for r in range(self.rows):
             for c in range(self.cols):
                 self.maps[r][c].update()
@@ -80,8 +86,39 @@ class World:
 
         return self.players[id]
 
-    def set_player(self, player) -> None:
-        assert player.id in self.players
+    def add_command(self, command: Command):
+        self.commands_queue.append(command)
 
-        self.players[player.id] = player
-        print("UPDATED PLAYER")
+    def handle_commands(self):
+        while self.commands_queue:
+            command = self.commands_queue.popleft()
+            self.handle_command(command)
+
+    def handle_command(self, command: Command):
+        author_id = command.author.id
+        player = self.get_player(author_id)
+        assert player
+
+        if command.name == "move":
+            x = command.x
+            y = command.y
+
+            player.move(x, y)
+
+        elif command.name == "attack":
+            t = command.target
+            assert t
+
+            if t.name == "player":
+                target = self.get_player(t.id)
+            else:
+                target = player.cell.entities.get(t.id)
+
+            if not target:
+                # command failed
+                return
+
+            player.attack(target)
+
+    def get_targetable_entities(self, player: Player):
+        return player.cell.get_targetable_entities(player)

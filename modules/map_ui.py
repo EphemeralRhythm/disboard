@@ -26,10 +26,7 @@ def draw_map(x: int, y: int, map_cell, unit=None):
 
     map_entities = []
 
-    player_mp = map_cell.world.players
-    players = [player_mp[p] for p in map_cell.players]
-
-    grid_collections = [players, map_cell.entities, map_cell.map_objects]
+    grid_collections = [map_cell.players, map_cell.entities, map_cell.map_objects]
 
     for collection in grid_collections:
         for obj in collection:

@@ -5,10 +5,20 @@ from game.states.stateManager import StateManager
 
 
 class Entity:
+    _last_id = 0
+    HOSTILITY_LEVEL_FRIENDLY = 0
+    HOSTILITY_LEVEL_NEUTRAL = 1
+    HOSTILITY_LEVEL_HOSTILE = 2
+
     def __init__(self, name, world):
+
         self.name = name
 
-        self.id = 0
+        Entity._last_id += 1
+        self.id = Entity._last_id
+
+        self.hostility_level = Entity.HOSTILITY_LEVEL_NEUTRAL
+
         self.x = 0
         self.y = 0
         self.grid_r = 0
@@ -33,7 +43,7 @@ class Entity:
         self.attackDamage = 10
 
     def __repr__(self):
-        return f"{self.name}, {self.id}: {self.x}, {self.y} "
+        return f"{self.name}"
 
     def init_from_db_post(self, post: dict):
         self.x = post["x"]
@@ -57,5 +67,15 @@ class Entity:
     def changeState(self, state: State):
         self.stateManager.changeState(state)
 
-    def take_damage(self, enemy):
+    def take_damage_from_entity(self, enemy):
+        self.hp -= enemy.attackDamage
+
+        if self.hp <= 0:
+            self.die()
+            return True
+
+    def do_damage(self, enemy):
+        pass
+
+    def die(self):
         pass
