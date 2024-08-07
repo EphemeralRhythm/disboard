@@ -1,15 +1,18 @@
 from game.entities.entity import Entity
 from PIL import Image
 
+from game.states.entityStates.moveState import MoveState
+
+
 class Player(Entity):
     def __init__(self, world, db_post):
         super().__init__("player", world)
         self.init_from_db_post(db_post)
 
-        self.player_class = db_post['class']
-        self.id = db_post['_id']
-        self.gender = db_post['gender']
-        self.color = db_post['color']
+        self.player_class = db_post["class"]
+        self.id = db_post["_id"]
+        self.gender = db_post["gender"]
+        self.color = db_post["color"]
 
         self.size = (64, 64)
 
@@ -32,10 +35,18 @@ class Player(Entity):
             else:
                 frame = "left"
 
-        unit_image = Image.open(f"./assets/images/entities/{self.player_class}/{self.gender}/{self.color}/{frame}.png")
+        unit_image = Image.open(
+            f"./assets/images/entities/{self.player_class}/{self.gender}/{self.color}/{frame}.png"
+        )
 
         if flipped:
             unit_image = unit_image.transpose(Image.FLIP_LEFT_RIGHT)
 
         map_image.paste(unit_image, (self.x - 12, self.y - 16), unit_image)
 
+    def move(self, x, y):
+        if self.stateManager.currentState.is_movement_locked:
+            return False
+
+        self.stateManager.changeState(MoveState(self, x, y))
+        return True

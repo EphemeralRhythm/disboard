@@ -1,7 +1,8 @@
 import json
 
+
 class Cell:
-    def __init__(self, id= 0, grid_r= 0, grid_c= 0):
+    def __init__(self, world, id=0, grid_r=0, grid_c=0):
 
         self.id = id
 
@@ -12,9 +13,10 @@ class Cell:
         self.entities = []
         self.map_objects = []
 
+        self.world = world
+
         self.base_image_path = f"./assets/images/maps/{self.id}.png"
 
-        
         self.spawn_regions = []
 
         with open(f"./assets/data/maps/{self.id}.json") as f:
@@ -29,19 +31,15 @@ class Cell:
         self.terrain = self.data["terrain"]
 
     def add_player(self, player):
-        self.players.add(player)
+        self.players.add(player.id)
 
     def remove_player(self, player):
-        assert(player in self.players)
-        self.players.remove(player)
+        assert player in self.players
+        self.players.remove(player.id)
 
     def __repr__(self) -> str:
         return f"[Cell] : [id: {self.id}, r: {self.grid_r}, c: {self.grid_c}]"
 
     def update(self):
-        print("players in cell: ", self.players)
         for entity in self.entities:
             entity.update()
-
-        for player in self.players:
-            player.update()

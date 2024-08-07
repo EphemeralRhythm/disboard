@@ -19,7 +19,6 @@ class Interface(commands.Cog):
         image = draw_map(unit.x, unit.y, unit.cell)
 
         path = f"./assets/images/player_maps/{ctx.author.id}.png"
-        print("Path: ", path)
         image.save(path)
 
         await ctx.reply(file=discord.File(path))

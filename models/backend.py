@@ -11,6 +11,4 @@ class Backend:
 
         while True:
             self.world.update()
-            for player in self.world.get_players():
-                print(player)
             time.sleep(10)

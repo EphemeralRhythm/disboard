@@ -12,7 +12,7 @@ class World:
         self.cols = len(self.grid[0])
 
         self.maps = [
-            [Cell(1, 0, 0) for c in range(self.cols)] for r in range(self.rows)
+            [Cell(self, 1, 0, 0) for c in range(self.cols)] for r in range(self.rows)
         ]
         self.init_maps()
 
@@ -21,12 +21,15 @@ class World:
     def init_maps(self):
         for r in range(self.rows):
             for c in range(self.cols):
-                self.maps[r][c] = Cell(self.grid[r][c], r, c)
+                self.maps[r][c] = Cell(self, self.grid[r][c], r, c)
 
     def update(self):
         for r in range(self.rows):
             for c in range(self.cols):
                 self.maps[r][c].update()
+
+        for player in self.players.values():
+            player.update()
 
     def add_player(self, post):
         player = Player(self, post)
@@ -70,3 +73,15 @@ class World:
 
     def get_players(self) -> dict:
         return self.players
+
+    def get_player(self, id) -> Player | None:
+        if id not in self.players:
+            return None
+
+        return self.players[id]
+
+    def set_player(self, player) -> None:
+        assert player.id in self.players
+
+        self.players[player.id] = player
+        print("UPDATED PLAYER")

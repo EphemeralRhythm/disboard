@@ -3,6 +3,8 @@ class State:
         self.entity = entity
         self.name = "state"
 
+        self.is_movement_locked = False
+
     def OnEnter(self):
         pass
 

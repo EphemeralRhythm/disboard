@@ -28,3 +28,6 @@ class Schwi(commands.Bot):
 
     async def reload(self, ctx, cog: str):
         self.reload_extension(f"cogs.{cog.lower()}")
+
+    async def on_connect(self):
+        await self.sync_commands()
