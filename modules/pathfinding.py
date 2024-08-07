@@ -1,6 +1,7 @@
 import math
 from queue import PriorityQueue
 
+
 def heuristic(s: tuple, e: tuple):
     return max(abs(s[0] - e[0]), abs(s[1] - e[1]))
 
@@ -10,11 +11,14 @@ def reconstruct_path(came_from, current):
     while current in came_from:
         current = came_from[current]
         path.append(current)
+
+    path.pop()
     return path[::-1]
+
 
 def astar(start_coords: tuple, end_coords: tuple, world_map):
     """
-        Provide the coordinates as (x, y) tuples
+    Provide the coordinates as (x, y) tuples
     """
     start = (start_coords[1] // 16, start_coords[0] // 16)
     end = (end_coords[1] // 16, end_coords[0] // 16)
@@ -60,9 +64,7 @@ def astar(start_coords: tuple, end_coords: tuple, world_map):
             if temp_g_score < g_score.get((nr, nc), float("inf")):
                 came_from[(nr, nc)] = current
                 g_score[(nr, nc)] = temp_g_score
-                f_score = temp_g_score + heuristic(
-                    (nr, nc), end
-                )
+                f_score = temp_g_score + heuristic((nr, nc), end)
 
                 if (nr, nc) not in open_set:
                     pq.put((f_score, (nr, nc)))

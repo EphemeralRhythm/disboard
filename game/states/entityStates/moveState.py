@@ -22,16 +22,15 @@ class MoveState(State):
         path = astar((self.entity.x, self.entity.y), (self.x, self.y), grid)
 
         if not path or len(path) == 0:
-            self.entity.stateManager.changeState(self.entity.idleState)
+            self.Exit()
             return
 
-        path.pop()
+        print((self.entity.x // 16, self.entity.y // 16), (self.x // 16, self.y // 16))
         self.path = path[::-1]
-        print(path)
 
     def OnUpdate(self):
         if not self.path:
-            self.entity.stateManager.changeState(self.entity.idleState)
+            self.Exit()
             return
 
         self.entity.x = self.path[-1][1] * 16

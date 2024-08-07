@@ -13,3 +13,6 @@ class State:
 
     def OnUpdate(self):
         pass
+
+    def Exit(self):
+        self.entity.stateManager.changeState(self.entity.idleState)
