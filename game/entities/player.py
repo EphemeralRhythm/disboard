@@ -4,6 +4,8 @@ from PIL import Image
 from game.states.entityStates.moveState import MoveState
 from game.states.mobStates.mobAttackState import MobAttackState
 
+from game.skills.skill import Skill
+
 
 class Player(Entity):
     def __init__(self, world, db_post):
@@ -17,6 +19,12 @@ class Player(Entity):
 
         self.size = (64, 64)
         self.channel_id = db_post.get("channel_id")
+
+        skill = Skill("fireball", 15, self)
+        skill.casting_time = 5
+        skill.active_time = 10
+
+        self.skills = [skill]
 
     def __repr__(self):
         return self.color + " " + self.player_class

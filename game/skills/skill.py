@@ -14,12 +14,20 @@ class Skill:
         self.casting = False
         self.active = False
 
+    def cast(self):
+        assert self.casting
+
+        self.casting_timeout -= 1
+
+        if self.casting_timeout == 0:
+            self.activate()
+            return True
+
+        return False
+
     def update(self):
         if self.casting:
-            self.casting_timeout -= 1
-
-            if self.casting_timeout == 0:
-                self.activate()
+            return
 
         elif self.active:
             self.effect()
@@ -47,4 +55,9 @@ class Skill:
         self.active_timeout = self.active_time
 
     def effect(self):
+        print("skill effect is taking place")
+        return
         raise NotImplementedError()
+
+    def __repr__(self):
+        return "skill"
