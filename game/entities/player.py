@@ -16,18 +16,16 @@ class Player(Entity):
         self.color = db_post["color"]
 
         self.size = (64, 64)
+        self.channel_id = db_post.get("channel_id")
 
     def __repr__(self):
         return self.color + " " + self.player_class
 
     def draw(self, map_image):
-        state = self.stateManager.currentState.name
         flipped = "False"
         frame = "idle"
 
-        if state == "move":
-            if self.dir_x == 1:
-                flipped = True
+        if self.is_moving:
 
             if self.dir_y == 1:
                 frame = "up"
@@ -35,6 +33,12 @@ class Player(Entity):
                 frame = "down"
             else:
                 frame = "left"
+
+        elif self.is_attacking:
+            frame = "attack"
+
+        if self.dir_x == 1:
+            flipped = True
 
         unit_image = Image.open(
             f"./assets/images/entities/{self.player_class}/{self.gender}/{self.color}/{frame}.png"

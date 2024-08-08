@@ -2,6 +2,8 @@ import random
 from game.states.state import State
 from game.states.entityStates.idleState import IdleState
 from game.states.stateManager import StateManager
+from models.interface.discord_event import DiscordEvent
+from utils.constants import COLOR_RED, COLOR_GREEN
 
 
 class Entity:
@@ -42,6 +44,12 @@ class Entity:
         self.attackRange = 16
         self.attackDamage = 10
 
+        self.is_moving = False
+        self.is_attacking = False
+
+        self.channel_id = None
+        self.skills = []
+
     def __repr__(self):
         return f"{self.name}"
 
@@ -62,20 +70,41 @@ class Entity:
         self.hp = self.max_hp
 
     def update(self):
+        self.is_moving = False
+        self.is_attacking = False
+
         self.stateManager.update()
+
+        for skill in self.skills:
+            skill.update()
 
     def changeState(self, state: State):
         self.stateManager.changeState(state)
 
     def take_damage_from_entity(self, enemy):
         self.hp -= enemy.attackDamage
+        print(f"{self} is taking damage from {enemy}. HP is now {self.hp}")
+
+        if self.name == "player" and self.channel_id:
+            title = "You Are Under Attack!"
+            description = f"You got attacked by {enemy} losing {enemy.attackDamage} HP.\nHP is now {self.hp}."
+            e = DiscordEvent(self.id, self.channel_id, title, description, COLOR_RED)
+            self.world.add_event(e)
+
+        if enemy.name == "player" and enemy.channel_id:
+            title = "Attacking!"
+            description = f"Attacked {self} dealing {enemy.attackDamage} DAMAGE.\nEnemy HP is now {self.hp}."
+            e = DiscordEvent(
+                enemy.id, enemy.channel_id, title, description, COLOR_GREEN
+            )
+            self.world.add_event(e)
 
         if self.hp <= 0:
             self.die()
             return True
 
     def do_damage(self, enemy):
-        pass
+        self.is_attacking = True
 
     def die(self):
-        pass
+        print(f"{self} dies.")

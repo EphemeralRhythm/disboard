@@ -9,3 +9,5 @@ COLOR_GREEN = discord.Color.from_rgb(8, 252, 36)
 
 VIEWPORT_X = 500
 VIEWPORT_Y = 300
+
+GAME_TICK = 10

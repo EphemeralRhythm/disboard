@@ -23,6 +23,7 @@ class MobAttackState(State):
                 self.Exit()
             return
 
+        entity.is_attacking = True
         entity.do_damage(target)
 
         if target.take_damage_from_entity(entity):

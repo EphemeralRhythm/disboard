@@ -1,5 +1,6 @@
 from game.states.state import State
 
+
 class IdleState(State):
     def __init__(self, entity):
         super().__init__(entity)
@@ -7,4 +8,4 @@ class IdleState(State):
         self.name = "idle"
 
     def OnUpdate(self):
-        print(f"{self.entity.name} is idling.")
+        print(f"{self.entity} is idling.")

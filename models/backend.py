@@ -1,5 +1,6 @@
 import time
 from game.world import World
+from utils.constants import GAME_TICK
 
 
 class Backend:
@@ -11,4 +12,4 @@ class Backend:
 
         while True:
             self.world.update()
-            time.sleep(10)
+            time.sleep(GAME_TICK)

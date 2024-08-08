@@ -1,6 +1,9 @@
 from game.states.state import State
 from game.entities.entity import Entity
 from modules.pathfinding import astar
+from game.utils import normalize
+from utils.constants import COLOR_GREEN, COLOR_RED
+from models.interface.discord_event import DiscordEvent
 
 
 class MoveState(State):
@@ -33,14 +36,42 @@ class MoveState(State):
             self.Exit()
             return
 
+        self.entity.dir_x = normalize(self.path[-1][1] * 16 - self.entity.x)
+        self.entity.dir_y = normalize(self.entity.y - self.path[-1][0] * 16)
+
         self.entity.x = self.path[-1][1] * 16
         self.entity.y = self.path[-1][0] * 16
-        self.path.pop()
 
-        print(f"{self.entity.name} is moving.", self.entity.x, self.entity.y)
+        self.path.pop()
+        self.entity.is_moving = True
+
+        print(f"{self.entity} is moving.", self.entity.x // 16, self.entity.y // 16)
 
     def OnExit(self):
         if self.reached_target():
-            print(f"{self.entity.name} reached destination.")
+            print(f"{self.entity} reached destination.")
+
+            if self.entity.name == "player":
+                title = "Move command"
+                description = "You reached your destination"
+                e = DiscordEvent(
+                    self.entity.id,
+                    self.entity.channel_id,
+                    title,
+                    description,
+                    COLOR_GREEN,
+                )
+                self.entity.world.add_event(e)
         else:
-            print(f"{self.entity.name} failed to reach destination.")
+            print(f"{self.entity} failed to reach destination.")
+            if self.entity.name == "player":
+                title = "Move command"
+                description = "Failed to reach destination."
+                e = DiscordEvent(
+                    self.entity.id,
+                    self.entity.channel_id,
+                    title,
+                    description,
+                    COLOR_RED,
+                )
+                self.entity.world.add_event(e)

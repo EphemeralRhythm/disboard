@@ -1,6 +1,7 @@
 from game.states.state import State
 from game.entities.entity import Entity
 from modules.pathfinding import astar
+from game.utils import normalize
 
 
 def follow(entity: Entity, target: Entity):
@@ -11,11 +12,15 @@ def follow(entity: Entity, target: Entity):
     path = astar((entity.x, entity.y), (target.x, target.y), grid)
 
     if not path or len(path) == 0:
-        return False
+        return entity.x // 16 == target.x // 16 and entity.y // 16 == target.y // 16
+
+    entity.dir_x = normalize(path[-1][1] * 16 - entity.x)
+    entity.dir_y = normalize(entity.y - path[-1][0] * 16)
 
     entity.x = path[0][1] * 16
     entity.y = path[0][0] * 16
 
+    entity.is_moving = True
     print(f"{entity.name} is following {target.name}.")
 
     return True

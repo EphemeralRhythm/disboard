@@ -27,7 +27,7 @@ class Controller(commands.Cog):
         x, y = map(int, args)
 
         command = Command(
-            name="move", author=player, x=player.x + x * 16, y=player.y + y * 16
+            name="move", author=player, x=player.x + x * 16, y=player.y - y * 16
         )
         self.client.world.add_command(command)
 
@@ -46,7 +46,7 @@ class Controller(commands.Cog):
         embed.description = "Select the entity that you want to attack\n\n"
 
         for i, t in enumerate(targets, 1):
-            dist = ((t.x - player.x) // 16, (player.y - t.y) // 16)
+            dist = (int((t.x - player.x) / 16), int((player.y - t.y) / 16))
             embed.description += f"{i}. {t.__repr__().title()} {dist}\n"
 
         await ctx.send(embed=embed)
@@ -64,9 +64,8 @@ class Controller(commands.Cog):
             msg = await self.client.wait_for("message", timeout=20, check=check)
 
         except asyncio.TimeoutError:
-            pass
+            return
 
-        assert msg
         index = int(msg.content)
         command = Command(name="attack", author=player, target=targets[index - 1])
         self.client.world.add_command(command)

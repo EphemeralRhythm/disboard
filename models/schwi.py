@@ -1,5 +1,6 @@
 import discord
 import settings
+import time
 
 from discord.ext import commands
 
@@ -11,6 +12,8 @@ class Schwi(commands.Bot):
 
         self.logger = settings.logging.getLogger("discord")
         self.world = world
+
+        self.players = {}
 
     async def on_ready(self):  # override on_ready
         assert self.user
@@ -28,6 +31,3 @@ class Schwi(commands.Bot):
 
     async def reload(self, ctx, cog: str):
         self.reload_extension(f"cogs.{cog.lower()}")
-
-    async def on_connect(self):
-        await self.sync_commands()

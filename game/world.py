@@ -5,6 +5,7 @@ import utils.database as db
 
 from game.cell import Cell
 from game.entities.player import Player
+from models.interface.discord_event import DiscordEvent
 
 
 class World:
@@ -22,6 +23,7 @@ class World:
         self.players = {}
 
         self.commands_queue = deque()
+        self.discord_events = []
 
     def init_maps(self):
         for r in range(self.rows):
@@ -86,6 +88,16 @@ class World:
 
         return self.players[id]
 
+    def add_event(self, event: DiscordEvent):
+        self.discord_events.append(event)
+
+    def get_events(self):
+        events = list(self.discord_events)
+        self.discord_events = []
+
+        print("returning ", events)
+        return events
+
     def add_command(self, command: Command):
         self.commands_queue.append(command)
 
@@ -119,6 +131,11 @@ class World:
                 return
 
             player.attack(target)
+
+        elif command.name == "set_channel":
+            db.players_collection.update_one(
+                {"_id": player.id}, {"$set": {"channel_id": command.x}}
+            )
 
     def get_targetable_entities(self, player: Player):
         return player.cell.get_targetable_entities(player)
