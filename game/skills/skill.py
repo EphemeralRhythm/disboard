@@ -1,5 +1,8 @@
+from game.command import Command
+
+
 class Skill:
-    def __init__(self, name, cooldown, entity):
+    def __init__(self, name, cooldown, entity, x: int = 0, y: int = 0, target=None):
         self.name = name
         self.cooldown = cooldown
         self.cooldown_timeout = 0
@@ -14,8 +17,12 @@ class Skill:
         self.casting = False
         self.active = False
 
+        self.x = x
+        self.y = y
+        self.target = target
+
     def cast(self):
-        assert self.casting
+        assert self.casting, "Attempted to update before casting started"
 
         self.casting_timeout -= 1
 
@@ -44,11 +51,7 @@ class Skill:
         return not self.active and not self.casting and self.cooldown_timeout == 0
 
     def use(self):
-        print("IS_READY? ", self.is_ready())
-        assert self.is_ready(), "attempted to cast when skill was not ready"
-
-        if not self.is_ready():
-            return
+        assert self.is_ready(), "attempted to use when skill was not ready"
 
         self.casting = True
         self.casting_timeout = self.casting_time
@@ -83,5 +86,5 @@ class Skill:
 
         return False
 
-    def initialize(self, player, ctx, client):
+    async def initialize(self, player, ctx, client) -> Command | None:
         raise NotImplementedError()

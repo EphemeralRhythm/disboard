@@ -58,13 +58,13 @@ class Controller(commands.Cog):
             return
 
         skill = await get_skills_embed(player, ctx, self.client)
-        print(skill)
 
         if skill:
-            command = Command(name="cast", author=player, skill=skill)
-            self.client.world.add_command(command)
+            command = await skill.initialize(player, ctx, self.client)
 
-            await ctx.send(f"Command added to queue, casting {skill.name}")
+            if command:
+                self.client.world.add_command(command)
+                await ctx.send(f"Command added to queue, casting {skill.name}")
 
 
 def setup(client):

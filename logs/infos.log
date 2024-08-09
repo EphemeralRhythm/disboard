@@ -1,9 +1,9 @@
-WARNING    - 2024-08-09 17:57:17,128 - client          : PyNaCl is not installed, voice will NOT be supported
-INFO       - 2024-08-09 17:57:17,129 - client          : logging in using static token
-INFO       - 2024-08-09 17:57:18,293 - gateway         : Shard ID None has sent the IDENTIFY payload.
-INFO       - 2024-08-09 17:57:18,625 - gateway         : Shard ID None has connected to Gateway: ["gateway-prd-us-east1-c-dcwq",{"micros":157313,"calls":["id_created",{"micros":1385,"calls":[]},"session_lookup_time",{"micros":421,"calls":[]},"session_lookup_finished",{"micros":16,"calls":[]},"discord-sessions-prd-1-212",{"micros":154390,"calls":["start_session",{"micros":125692,"calls":["discord-api-rpc-864859bd5f-jp4wd",{"micros":122381,"calls":["get_user",{"micros":5163},"get_guilds",{"micros":3005},"send_scheduled_deletion_message",{"micros":4},"guild_join_requests",{"micros":2085},"authorized_ip_coro",{"micros":8}]}]},"starting_guild_connect",{"micros":83,"calls":[]},"presence_started",{"micros":20551,"calls":[]},"guilds_started",{"micros":265,"calls":[]},"guilds_connect",{"micros":7,"calls":[]},"presence_connect",{"micros":7757,"calls":[]},"connect_finished",{"micros":7767,"calls":[]},"build_ready",{"micros":27,"calls":[]},"clean_ready",{"micros":0,"calls":[]},"optimize_ready",{"micros":1,"calls":[]},"split_ready",{"micros":0,"calls":[]}]}]}] (Session ID: 20fe305ed3c6d46668d63ac4a36cb3a5).
-INFO       - 2024-08-09 17:57:20,680 - schwi           : User: Schwi#1432 (ID: 899985748248367144)
-INFO       - 2024-08-09 18:00:14,911 - client          : Cleaning up tasks.
-INFO       - 2024-08-09 18:00:14,912 - client          : Cleaning up after 3 tasks.
-INFO       - 2024-08-09 18:00:14,913 - client          : All tasks finished cancelling.
-INFO       - 2024-08-09 18:00:14,913 - client          : Closing the event loop.
+WARNING    - 2024-08-09 21:36:29,287 - client          : PyNaCl is not installed, voice will NOT be supported
+INFO       - 2024-08-09 21:36:29,288 - client          : logging in using static token
+INFO       - 2024-08-09 21:36:30,115 - gateway         : Shard ID None has sent the IDENTIFY payload.
+INFO       - 2024-08-09 21:36:30,353 - gateway         : Shard ID None has connected to Gateway: ["gateway-prd-us-east1-b-4qj0",{"micros":96274,"calls":["id_created",{"micros":945,"calls":[]},"session_lookup_time",{"micros":284,"calls":[]},"session_lookup_finished",{"micros":14,"calls":[]},"discord-sessions-prd-1-130",{"micros":94781,"calls":["start_session",{"micros":45981,"calls":["discord-api-rpc-7674569487-vsjqp",{"micros":42265,"calls":["get_user",{"micros":5675},"get_guilds",{"micros":3854},"send_scheduled_deletion_message",{"micros":6},"guild_join_requests",{"micros":1},"authorized_ip_coro",{"micros":9}]}]},"starting_guild_connect",{"micros":66,"calls":[]},"presence_started",{"micros":28545,"calls":[]},"guilds_started",{"micros":141,"calls":[]},"guilds_connect",{"micros":2,"calls":[]},"presence_connect",{"micros":20018,"calls":[]},"connect_finished",{"micros":20024,"calls":[]},"build_ready",{"micros":18,"calls":[]},"clean_ready",{"micros":1,"calls":[]},"optimize_ready",{"micros":0,"calls":[]},"split_ready",{"micros":1,"calls":[]}]}]}] (Session ID: 553efdb0a6c84cefccb42fcbeca2a014).
+INFO       - 2024-08-09 21:36:32,396 - schwi           : User: Schwi#1432 (ID: 899985748248367144)
+INFO       - 2024-08-09 21:37:41,077 - client          : Cleaning up tasks.
+INFO       - 2024-08-09 21:37:41,077 - client          : Cleaning up after 3 tasks.
+INFO       - 2024-08-09 21:37:41,078 - client          : All tasks finished cancelling.
+INFO       - 2024-08-09 21:37:41,079 - client          : Closing the event loop.

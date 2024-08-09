@@ -43,7 +43,7 @@ class Entity:
 
         self.hp = 100
         self.attackRange = 16
-        self.attackDamage = 50
+        self.attackDamage = 10
 
         self.is_moving = False
         self.is_attacking = False
@@ -87,7 +87,7 @@ class Entity:
         self.stateManager.changeState(state)
 
     def take_damage_from_entity(self, enemy):
-        self.hp -= enemy.attackDamage
+        self.hp -= enemy.attackDmage
         print(f"{self} is taking damage from {enemy}. HP is now {self.hp}")
 
         description = f"You got attacked by {enemy} losing {enemy.attackDamage} HP.\nHP is now {self.hp}."

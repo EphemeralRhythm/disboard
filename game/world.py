@@ -137,13 +137,15 @@ class World:
 
         elif command.name == "cast":
             skill = command.skill
-            assert skill
+            assert skill, "Failed to load skill, world (cast) update"
 
             index = player.skills.index(skill)
-            print("index: ", index)
-            print(player.skills[index])
+            ps = player.skills[index]
+            ps.x = skill.x
+            ps.y = skill.y
+            ps.target = skill.target
 
-            player.cast(player.skills[index])
+            player.cast(ps)
 
         elif command.name == "set_channel":
             player.channel_id = command.x

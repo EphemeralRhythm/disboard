@@ -11,13 +11,9 @@ class CastState(State):
         self.is_movement_locked = True
 
     def OnEnter(self):
-        super().OnEnter()
-        print("HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII")
         self.skill.use()
 
     def OnUpdate(self):
-        super().OnUpdate()
-        print("DID ENTER???? ", self.did_enter)
         print(f"{self.entity} is casting {self.skill}.")
 
         if self.skill.cast():

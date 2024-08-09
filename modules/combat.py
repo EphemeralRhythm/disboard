@@ -1,8 +1,7 @@
 import discord
 import asyncio
 
-from utils.constants import COLOR_BLUE, COLOR_RED
-from game.entities.player import Player
+from utils.constants import COLOR_BLUE
 
 
 async def send_target_select(client, targets, player, ctx, title):
@@ -38,7 +37,7 @@ async def send_target_select(client, targets, player, ctx, title):
     return targets[index - 1]
 
 
-async def get_skills_embed(player: Player, ctx, client):
+async def get_skills_embed(player, ctx, client):
     embed = discord.Embed(title="Player Skills", color=COLOR_BLUE)
 
     if not player.skills:

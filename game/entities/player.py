@@ -5,7 +5,7 @@ from game.states.entityStates.moveState import MoveState
 from game.states.entityStates.castState import CastState
 from game.states.mobStates.mobAttackState import MobAttackState
 
-from game.skills.skill import Skill
+from game.skills.generic.fireball import Fireball
 from utils.constants import COLOR_YELLOW
 
 from models.interface.discord_event import DiscordEvent
@@ -24,9 +24,7 @@ class Player(Entity):
         self.size = (64, 64)
         self.channel_id = db_post.get("channel_id")
 
-        skill = Skill("fireball", 15, self)
-        skill.casting_time = 5
-        skill.active_time = 10
+        skill = Fireball(self)
 
         self.skills = [skill]
 
