@@ -18,6 +18,9 @@ class World:
         self.maps = [
             [Cell(self, 1, 0, 0) for c in range(self.cols)] for r in range(self.rows)
         ]
+
+        self.dead_pool = Cell(self, 1, -1, -1)
+
         self.init_maps()
 
         self.players = {}
@@ -132,7 +135,18 @@ class World:
 
             player.attack(target)
 
+        elif command.name == "cast":
+            skill = command.skill
+            assert skill
+
+            index = player.skills.index(skill)
+            print("index: ", index)
+            print(player.skills[index])
+
+            player.cast(player.skills[index])
+
         elif command.name == "set_channel":
+            player.channel_id = command.x
             db.players_collection.update_one(
                 {"_id": player.id}, {"$set": {"channel_id": command.x}}
             )

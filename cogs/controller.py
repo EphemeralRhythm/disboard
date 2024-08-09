@@ -1,9 +1,12 @@
-import discord
-
 import asyncio
+from functools import wraps
+
+import discord
 from discord.ext import commands
 from game.command import Command
+from modules.combat import send_target_select, get_skills_embed
 from utils.constants import COLOR_RED
+from modules.game import check_player, check_player_alive
 
 
 class Controller(commands.Cog):
@@ -11,14 +14,12 @@ class Controller(commands.Cog):
         self.client = client
 
     @commands.command(name="move")
-    async def move(self, ctx, *, args):
-        print("args: ", args)
-        player = self.client.world.get_player(str(ctx.author.id))
-        if not player:
-            await ctx.send("You are not a part of the game system.")
+    async def move(self, ctx, *args):
+        if not (player := await check_player_alive(self.client, ctx)):
             return
 
-        args = args.split()
+        if player.is_movement_locked():
+            await ctx.send("Unable to do that.")
 
         if len(args) != 2:
             await ctx.send("Invalid syntax.")
@@ -35,42 +36,35 @@ class Controller(commands.Cog):
 
     @commands.command(name="attack")
     async def attack(self, ctx):
-        player = self.client.world.get_player(str(ctx.author.id))
-        if not player:
-            await ctx.send("You are not a part of the game system.")
+        if not (player := await check_player_alive(self.client, ctx)):
             return
+
+        if player.is_movement_locked():
+            await ctx.send("Unable to do that.")
 
         targets = self.client.world.get_targetable_entities(player)
+        target = await send_target_select(
+            self.client, targets, player, ctx, "Attack command"
+        )
 
-        embed = discord.Embed(title="Attack Command", color=COLOR_RED)
-        embed.description = "Select the entity that you want to attack\n\n"
+        if target:
+            command = Command(name="attack", author=player, target=target)
+            self.client.world.add_command(command)
+            await ctx.send(f"Command added to queue! Attacking {target}.")
 
-        for i, t in enumerate(targets, 1):
-            dist = (int((t.x - player.x) / 16), int((player.y - t.y) / 16))
-            embed.description += f"{i}. {t.__repr__().title()} {dist}\n"
-
-        await ctx.send(embed=embed)
-
-        def check(m: discord.Message):
-            return (
-                m.author.id == ctx.author.id
-                and m.channel == ctx.channel
-                and m.content.isdigit()
-                and 0 < int(m.content) <= len(targets)
-            )
-
-        msg = None
-        try:
-            msg = await self.client.wait_for("message", timeout=20, check=check)
-
-        except asyncio.TimeoutError:
+    @commands.command(name="skills")
+    async def skills(self, ctx):
+        if not (player := await check_player_alive(self.client, ctx)):
             return
 
-        index = int(msg.content)
-        command = Command(name="attack", author=player, target=targets[index - 1])
-        self.client.world.add_command(command)
+        skill = await get_skills_embed(player, ctx, self.client)
+        print(skill)
 
-        await ctx.send(f"Command added to queue! Attacking {targets[index - 1]}.")
+        if skill:
+            command = Command(name="cast", author=player, skill=skill)
+            self.client.world.add_command(command)
+
+            await ctx.send(f"Command added to queue, casting {skill.name}")
 
 
 def setup(client):

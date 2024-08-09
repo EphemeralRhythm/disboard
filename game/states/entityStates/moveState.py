@@ -47,31 +47,11 @@ class MoveState(State):
 
         print(f"{self.entity} is moving.", self.entity.x // 16, self.entity.y // 16)
 
-    def OnExit(self):
+    def OnExit(self, canceled=False):
         if self.reached_target():
             print(f"{self.entity} reached destination.")
+            self.entity.notify("You reached your destination", COLOR_GREEN)
 
-            if self.entity.name == "player":
-                title = "Move command"
-                description = "You reached your destination"
-                e = DiscordEvent(
-                    self.entity.id,
-                    self.entity.channel_id,
-                    title,
-                    description,
-                    COLOR_GREEN,
-                )
-                self.entity.world.add_event(e)
-        else:
+        elif not canceled:
             print(f"{self.entity} failed to reach destination.")
-            if self.entity.name == "player":
-                title = "Move command"
-                description = "Failed to reach destination."
-                e = DiscordEvent(
-                    self.entity.id,
-                    self.entity.channel_id,
-                    title,
-                    description,
-                    COLOR_RED,
-                )
-                self.entity.world.add_event(e)
+            self.entity.notify("Failed to reach destination.", COLOR_RED)

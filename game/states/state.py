@@ -5,14 +5,18 @@ class State:
 
         self.is_movement_locked = False
 
-    def OnEnter(self):
-        pass
+        self.did_enter = False
 
-    def OnExit(self):
+    def OnEnter(self):
+        self.did_enter = True
+
+    def OnExit(self, canceled=False):
         pass
 
     def OnUpdate(self):
-        pass
+        if not self.did_enter:
+            self.OnEnter()
+            self.OnUpdate()
 
     def Exit(self):
         self.entity.stateManager.changeState(self.entity.idleState)

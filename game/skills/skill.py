@@ -44,10 +44,15 @@ class Skill:
         return not self.active and not self.casting and self.cooldown_timeout == 0
 
     def use(self):
-        assert self.is_ready()
+        print("IS_READY? ", self.is_ready())
+        assert self.is_ready(), "attempted to cast when skill was not ready"
+
+        if not self.is_ready():
+            return
 
         self.casting = True
         self.casting_timeout = self.casting_time
+        print("Started casting", self)
 
     def activate(self):
         self.casting = False
@@ -60,4 +65,23 @@ class Skill:
         raise NotImplementedError()
 
     def __repr__(self):
-        return "skill"
+        name = self.name
+        if self.casting:
+            name += f" - (Casting, activates in {self.casting_timeout})"
+        elif self.active:
+            name += f" - (Active, fades in {self.active_timeout})"
+        elif self.cooldown_timeout == 0:
+            name += " - (Ready)"
+        else:
+            name += f" - (Available in {self.cooldown_timeout})"
+
+        return name
+
+    def __eq__(self, __value: object) -> bool:
+        if isinstance(__value, Skill):
+            return self.name == __value.name
+
+        return False
+
+    def initialize(self, player, ctx, client):
+        raise NotImplementedError()

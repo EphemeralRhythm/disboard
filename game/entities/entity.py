@@ -1,9 +1,10 @@
 import random
-from game.states.state import State
+
 from game.states.entityStates.idleState import IdleState
+from game.states.state import State
 from game.states.stateManager import StateManager
 from models.interface.discord_event import DiscordEvent
-from utils.constants import COLOR_RED, COLOR_GREEN
+from utils.constants import COLOR_GREEN, COLOR_RED, COLOR_YELLOW
 
 
 class Entity:
@@ -42,13 +43,14 @@ class Entity:
 
         self.hp = 100
         self.attackRange = 16
-        self.attackDamage = 10
+        self.attackDamage = 50
 
         self.is_moving = False
         self.is_attacking = False
 
         self.channel_id = None
         self.skills = []
+        self.dead = False
 
     def __repr__(self):
         return f"{self.name}"
@@ -70,6 +72,9 @@ class Entity:
         self.hp = self.max_hp
 
     def update(self):
+        if self.dead:
+            return
+
         self.is_moving = False
         self.is_attacking = False
 
@@ -85,22 +90,17 @@ class Entity:
         self.hp -= enemy.attackDamage
         print(f"{self} is taking damage from {enemy}. HP is now {self.hp}")
 
-        if self.name == "player" and self.channel_id:
-            title = "You Are Under Attack!"
-            description = f"You got attacked by {enemy} losing {enemy.attackDamage} HP.\nHP is now {self.hp}."
-            e = DiscordEvent(self.id, self.channel_id, title, description, COLOR_RED)
-            self.world.add_event(e)
+        description = f"You got attacked by {enemy} losing {enemy.attackDamage} HP.\nHP is now {self.hp}."
+        self.notify(description, COLOR_RED)
 
-        if enemy.name == "player" and enemy.channel_id:
-            title = "Attacking!"
-            description = f"Attacked {self} dealing {enemy.attackDamage} DAMAGE.\nEnemy HP is now {self.hp}."
-            e = DiscordEvent(
-                enemy.id, enemy.channel_id, title, description, COLOR_GREEN
-            )
-            self.world.add_event(e)
+        description = f"Attacked {self} dealing {enemy.attackDamage} DAMAGE.\nEnemy HP is now {self.hp}."
+        enemy.notify(description, COLOR_GREEN)
 
         if self.hp <= 0:
             self.die()
+
+            self.notify("You Died.", COLOR_RED)
+            enemy.notify("Target eliminated.", COLOR_RED)
             return True
 
     def do_damage(self, enemy):
@@ -108,3 +108,7 @@ class Entity:
 
     def die(self):
         print(f"{self} dies.")
+        self.cell.entities.pop(self)
+
+    def notify(self, description, color=COLOR_YELLOW):
+        return

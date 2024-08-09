@@ -2,9 +2,13 @@ from game.entities.entity import Entity
 from PIL import Image
 
 from game.states.entityStates.moveState import MoveState
+from game.states.entityStates.castState import CastState
 from game.states.mobStates.mobAttackState import MobAttackState
 
 from game.skills.skill import Skill
+from utils.constants import COLOR_YELLOW
+
+from models.interface.discord_event import DiscordEvent
 
 
 class Player(Entity):
@@ -64,7 +68,29 @@ class Player(Entity):
         return self.stateManager.currentState.is_movement_locked
 
     def move(self, x, y):
-        self.stateManager.changeState(MoveState(self, x, y))
+        self.stateManager.changeState(MoveState(self, x, y), True)
 
     def attack(self, target: Entity):
-        self.stateManager.changeState(MobAttackState(self, target))
+        self.stateManager.changeState(MobAttackState(self, target), True)
+
+    def cast(self, skill):
+        self.stateManager.changeState(CastState(self, skill))
+
+    def notify(self, description, color=COLOR_YELLOW):
+        if self.name != "player" or not self.channel_id:
+            return
+
+        e = DiscordEvent(
+            self.id,
+            self.channel_id,
+            description,
+            color,
+        )
+
+        self.world.add_event(e)
+
+    def die(self):
+        self.dead = True
+        if self.cell:
+            self.cell.remove_player(self)
+            self.cell = self.world.dead_pool

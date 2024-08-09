@@ -8,7 +8,7 @@ class Interface(commands.Cog):
         self.client = client
 
     @commands.command(name="map")
-    async def _map(self, ctx):
+    async def _map(self, ctx, *, args=None):
         players = self.client.world.get_players()
 
         if str(ctx.author.id) not in players:
@@ -16,7 +16,7 @@ class Interface(commands.Cog):
             return
 
         unit = players[str(ctx.author.id)]
-        image = draw_map(unit.x, unit.y, unit.cell)
+        image = draw_map(unit.x, unit.y, unit.cell, bool(args))
 
         path = f"./assets/images/player_maps/{ctx.author.id}.png"
         image.save(path)

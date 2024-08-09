@@ -1,5 +1,5 @@
 from PIL import Image, ImageDraw
-from utils.constants import VIEWPORT_X, VIEWPORT_Y
+from utils.constants import VIEWPORT_X, VIEWPORT_Y, ZOOMED_VIEWPORT_X, ZOOMED_VIEWPORT_Y
 
 
 def in_image_bounds(map_object, camera_x, camera_y):
@@ -13,16 +13,22 @@ def in_image_bounds(map_object, camera_x, camera_y):
     )
 
 
-def draw_map(x: int, y: int, map_cell, unit=None):
+def draw_map(x: int, y: int, map_cell, zoomed=False, unit=None):
+    if zoomed:
+        viewport_x = ZOOMED_VIEWPORT_X
+        viewport_y = ZOOMED_VIEWPORT_Y
+    else:
+        viewport_x = VIEWPORT_X
+        viewport_y = VIEWPORT_Y
 
     map_size_x, map_size_y = map_cell.size[0], map_cell.size[1]
 
     # constraint x and y
-    x = max(x, VIEWPORT_X // 2)
-    x = min(x, map_size_x - VIEWPORT_X // 2)
+    x = max(x, viewport_x // 2)
+    x = min(x, map_size_x - viewport_x // 2)
 
-    y = max(y, VIEWPORT_Y // 2)
-    y = min(y, map_size_y - VIEWPORT_Y // 2)
+    y = max(y, viewport_y // 2)
+    y = min(y, map_size_y - viewport_y // 2)
 
     map_entities = []
 
@@ -57,11 +63,14 @@ def draw_map(x: int, y: int, map_cell, unit=None):
 
     map_image = map_image.crop(
         (
-            x - VIEWPORT_X // 2,
-            y - VIEWPORT_Y // 2,
-            x + VIEWPORT_X // 2,
-            y + VIEWPORT_Y // 2,
+            x - viewport_x // 2,
+            y - viewport_y // 2,
+            x + viewport_x // 2,
+            y + viewport_y // 2,
         )
     )
+
+    if zoomed:
+        map_image = map_image.resize((viewport_x * 3, viewport_y * 3), Image.NEAREST)
 
     return map_image

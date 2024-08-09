@@ -44,7 +44,7 @@ class FollowState(State):
         if not follow(self.entity, self.target):
             self.Exit()
 
-    def OnExit(self):
+    def OnExit(self, canceled=False):
         if self.reached_target():
             print(f"{self.entity.name} reached destination.")
         else:

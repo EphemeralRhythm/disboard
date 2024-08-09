@@ -9,3 +9,6 @@ class IdleState(State):
 
     def OnUpdate(self):
         print(f"{self.entity} is idling.")
+
+    def OnExit(self, canceled=False):
+        print("BYYYYYYYYYYYEEEEEE")

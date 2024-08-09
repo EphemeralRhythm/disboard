@@ -3,4 +3,7 @@ def distance(entity1, entity2):
 
 
 def normalize(a: float):
+    if abs(a) < 10:
+        return 0
+
     return 1 if a > 0 else (-1 if a < 0 else 0)
