@@ -4,7 +4,14 @@ from game.states.entityStates.idleState import IdleState
 from game.states.state import State
 from game.states.stateManager import StateManager
 from models.interface.discord_event import DiscordEvent
-from utils.constants import COLOR_GREEN, COLOR_RED, COLOR_YELLOW, AUTO_ATTACK_VARIANCE
+from utils.constants import (
+    COLOR_CYAN,
+    COLOR_GREEN,
+    COLOR_RED,
+    COLOR_YELLOW,
+    AUTO_ATTACK_VARIANCE,
+    ATK_DEF_VARIANCE,
+)
 
 
 class Entity:
@@ -34,8 +41,10 @@ class Entity:
         self.MAX_MP = 0
         self.level = 0
 
-        self.HP = 100
+        self.HP = 50
         self.DPS = 10
+        self.DODGE = 50
+        self.DEF = 0
 
         self.attackRange = 16
 
@@ -91,40 +100,81 @@ class Entity:
     def get_attack_damage(self):
         return self.DPS
 
-    def is_crit(self):
-        # 10% chance of crit rates
-        crit_rate = 0.1
-        return random.randint(0, 100) >= crit_rate * 100
+    # damage absorbtion
+    def get_DEF(self):
+        return self.DEF
 
-    def auto_attack(self, entity):
-        damage = self.get_attack_damage() * random.randint(
-            100 - AUTO_ATTACK_VARIANCE, 100 + AUTO_ATTACK_VARIANCE
+    def get_DODGE(self):
+        return self.DODGE
+
+    def roll_crit(self):
+        # 10% chance of crit rates
+        crit_rate = 30
+        return random.randint(0, 100) >= 100 - crit_rate
+
+    def roll_dodge(self):
+        return random.randint(0, 100) >= 100 - self.DODGE
+
+    def roll_DEF(self):
+        return (
+            random.randint(100 - ATK_DEF_VARIANCE, 100 + ATK_DEF_VARIANCE)
+            * self.get_DEF()
         )
 
-        is_crit = self.is_crit()
+    def auto_attack(self, entity):
+        damage = int(
+            (
+                self.get_attack_damage()
+                * random.randint(100 - AUTO_ATTACK_VARIANCE, 100 + AUTO_ATTACK_VARIANCE)
+                / 100
+            )
+        )
+
+        is_crit = self.roll_crit()
 
         if is_crit:
-            damage *= 1.5
+            damage = int(damage * 1.5)
 
-    def take_damage_from_entity(self, enemy):
-        self.HP -= enemy.attackDmage
-        print(f"{self} is taking damage from {enemy}. HP is now {self.HP}")
+        did_dodge = entity.roll_dodge()
 
-        description = f"You got attacked by {enemy} losing {enemy.attackDamage} HP.\nHP is now {self.HP}."
-        self.notify(description, COLOR_RED)
+        if did_dodge and not is_crit:
+            self.notify(
+                f"Attacking {entity}.\n{entity} dodges the attack taking no damage.",
+                COLOR_YELLOW,
+            )
+            entity.notify(
+                f"You were attacked by {self}.\nYou dodged the attack taking no damage."
+            )
 
-        description = f"Attacked {self} dealing {enemy.attackDamage} DAMAGE.\nEnemy HP is now {self.HP}."
-        enemy.notify(description, COLOR_GREEN)
+            return
 
-        if self.HP <= 0:
-            self.die()
+        damage_absorbed = int(entity.roll_DEF())
+        damage_dealt = max(damage - damage_absorbed, 0)
 
-            self.notify("You Died.", COLOR_RED)
-            enemy.notify("Target eliminated.", COLOR_RED)
+        entity.HP -= damage_dealt
+
+        print(f"{entity} is taking damage from {self}. HP is now {entity.HP}")
+
+        self.notify(
+            (
+                ("CRITICAL HIT!\n" if is_crit else "")
+                + f"Attacked {entity} dealing {damage_dealt} DAMAGE.\nEnemy HP is now {entity.HP}."
+            ),
+            COLOR_GREEN,
+        )
+
+        entity.notify(
+            ("CRITICAL HIT!\n" if is_crit else "")
+            + f"You got attacked by {self} losing {damage_dealt} HP.\nHP is now {entity.HP}.",
+            COLOR_RED,
+        )
+
+        if entity.HP <= 0:
+            entity.die()
+
+            entity.notify("You Died.", COLOR_RED)
+            self.notify("Target eliminated.", COLOR_CYAN)
             return True
-
-    def do_damage(self, enemy):
-        self.is_attacking = True
 
     def die(self):
         print(f"{self} dies.")

@@ -12,6 +12,7 @@ def follow(entity: Entity, target: Entity):
     path = astar((entity.x, entity.y), (target.x, target.y), grid)
 
     if not path or len(path) == 0:
+        entity.update_location()
         return entity.x // 16 == target.x // 16 and entity.y // 16 == target.y // 16
 
     entity.dir_x = normalize(path[-1][1] * 16 - entity.x)

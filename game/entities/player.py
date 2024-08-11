@@ -30,10 +30,10 @@ class Player(Entity):
         self.skills = [skill]
 
     def __repr__(self):
-        return self.color + " " + self.player_class
+        return (self.color + " " + self.player_class).title()
 
     def draw(self, map_image):
-        flipped = "False"
+        flipped = False
         frame = "idle"
 
         if self.is_moving:
@@ -56,7 +56,7 @@ class Player(Entity):
         )
 
         if flipped:
-            unit_image = unit_image.transpose(Image.FLIP_LEFT_RIGHT)
+            unit_image = unit_image.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
 
         map_image.paste(unit_image, (self.x - 12, self.y - 16), unit_image)
 

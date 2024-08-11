@@ -6,6 +6,7 @@ from game.states.entityStates.followState import follow
 
 class MobAttackState(State):
     def __init__(self, entity: Entity, target: Entity):
+        super().__init__(entity)
         self.name = "attack"
         self.entity = entity
         self.target = target
@@ -24,7 +25,6 @@ class MobAttackState(State):
             return
 
         entity.is_attacking = True
-        entity.do_damage(target)
 
-        if target.take_damage_from_entity(entity):
+        if self.entity.auto_attack(target):
             self.Exit()
