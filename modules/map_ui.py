@@ -71,6 +71,6 @@ def draw_map(x: int, y: int, map_cell, zoomed=False, unit=None):
     )
 
     if zoomed:
-        map_image = map_image.resize((viewport_x * 3, viewport_y * 3), Image.NEAREST)
+        map_image = map_image.resize((viewport_x * 4, viewport_y * 4), Image.NEAREST)
 
     return map_image

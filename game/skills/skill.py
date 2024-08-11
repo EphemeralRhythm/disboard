@@ -8,6 +8,8 @@ class Skill:
         self.cooldown_timeout = 0
         self.entity = entity
 
+        self.range = 5
+
         self.casting_time = 1
         self.casting_timeout = 0
 

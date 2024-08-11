@@ -8,6 +8,7 @@ from game.states.mobStates.mobAttackState import MobAttackState
 from game.skills.generic.fireball import Fireball
 from utils.constants import COLOR_YELLOW
 
+import utils.database as db
 from models.interface.discord_event import DiscordEvent
 
 
@@ -51,7 +52,7 @@ class Player(Entity):
             flipped = True
 
         unit_image = Image.open(
-            f"./assets/images/entities/{self.player_class}/{self.gender}/{self.color}/{frame}.png"
+            f"./assets/images/entities/player/{self.player_class}/{self.gender}/{self.color}/{frame}.png"
         )
 
         if flipped:
@@ -92,3 +93,16 @@ class Player(Entity):
         if self.cell:
             self.cell.remove_player(self)
             self.cell = self.world.dead_pool
+
+    def update_location(self):
+        db.players_collection.update_one(
+            {"_id": self.id},
+            {
+                "$set": {
+                    "x": self.x,
+                    "y": self.y,
+                    "grid_r": self.grid_r,
+                    "grid_c": self.grid_c,
+                }
+            },
+        )

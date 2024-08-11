@@ -48,6 +48,7 @@ class MoveState(State):
         print(f"{self.entity} is moving.", self.entity.x // 16, self.entity.y // 16)
 
     def OnExit(self, canceled=False):
+        self.entity.update_location()
         if self.reached_target():
             print(f"{self.entity} reached destination.")
             self.entity.notify("You reached your destination", COLOR_GREEN)

@@ -14,7 +14,7 @@ class MobAttackState(State):
         target = self.target
         entity = self.entity
 
-        if target.cell != entity.cell:
+        if not target or target.cell != entity.cell:
             self.Exit()
             return
 
