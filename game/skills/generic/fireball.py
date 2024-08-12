@@ -7,7 +7,11 @@ class Fireball(EntityTargetSkill):
 
         self.active_time = 1
         self.casting_time = 5
+        self.damage = 30
 
     def effect(self):
         assert self.target, f"Skill {self} has no target"
-        self.target.take_damage_from_entity(self.entity, 30)
+        self.target.take_damage(self.damage, self.entity)
+        self.entity.notify(
+            f"Attacked {self.target} with a fireball dealing {self.damage} damage."
+        )

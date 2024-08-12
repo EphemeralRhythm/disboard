@@ -73,7 +73,9 @@ class Player(Entity):
         self.stateManager.changeState(MobAttackState(self, target), True)
 
     def cast(self, skill):
-        self.stateManager.changeState(CastState(self, skill))
+        self.stateManager.changeState(
+            CastState(self, skill, self.stateManager.currentState)
+        )
 
     def notify(self, description, color=COLOR_YELLOW):
         if self.name != "player" or not self.channel_id:

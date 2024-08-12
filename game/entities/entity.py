@@ -41,10 +41,11 @@ class Entity:
         self.MAX_MP = 0
         self.level = 0
 
-        self.HP = 50
-        self.DPS = 10
-        self.DODGE = 50
-        self.DEF = 0
+        self.HP = 100
+        self.ATK = 20
+        self.AGI = 10
+        self.DEF = 10
+        self.CRIT = 10
 
         self.attackRange = 16
 
@@ -60,8 +61,11 @@ class Entity:
         self.is_attacking = False
 
         self.channel_id = None
-        self.skills = []
         self.dead = False
+
+        self.skills = []
+        self.status_effects = []
+        self.gear = []
 
     def __repr__(self):
         return f"{self.name}"
@@ -97,53 +101,84 @@ class Entity:
     def changeState(self, state: State):
         self.stateManager.changeState(state)
 
-    def get_attack_damage(self):
-        return self.DPS
+    def get_attack_damage(self) -> int:
+        """
+        base attack damage with all the modifiers
+        """
+        atk = self.ATK
+
+        for effect in self.status_effects:
+            atk += effect.get_ATK_modifier()
+
+        return atk
+
+    def get_input_variance(self, inp: int, variance: int) -> int:
+        return int(random.randint(100 - variance, 100 + variance) * inp / 100)
 
     # damage absorbtion
-    def get_DEF(self):
-        return self.DEF
+    def get_DEF(self) -> int:
+        _def = self.DEF
 
-    def get_DODGE(self):
-        return self.DODGE
+        for effect in self.status_effects:
+            _def += effect.get_DEF_modifier()
 
-    def roll_crit(self):
+        return _def
+
+    def get_AGI(self) -> int:
+        agi = self.AGI
+
+        for effect in self.status_effects:
+            agi += effect.get_AGI_modifier()
+
+        return agi
+
+    def get_crit_rate(self) -> int:
+        """
+        returns a number between 0 and 100
+        """
+        rate = self.CRIT
+
+        for effect in self.status_effects:
+            rate += effect.get_CRIT_modifier()
+
+        return rate
+
+    def roll_crit(self) -> bool:
         # 10% chance of crit rates
-        crit_rate = 30
+        crit_rate = self.get_crit_rate()
         return random.randint(0, 100) >= 100 - crit_rate
 
-    def roll_dodge(self):
-        return random.randint(0, 100) >= 100 - self.DODGE
+    def roll_AGI(self) -> bool:
+        """
+        returns whether a player succeeds in a dodge
+        """
+
+        return random.randint(0, 100) >= 100 - self.get_AGI()
 
     def roll_DEF(self):
-        return (
-            random.randint(100 - ATK_DEF_VARIANCE, 100 + ATK_DEF_VARIANCE)
-            * self.get_DEF()
-        )
+        return self.get_input_variance(self.get_DEF(), ATK_DEF_VARIANCE)
 
     def auto_attack(self, entity):
-        damage = int(
-            (
-                self.get_attack_damage()
-                * random.randint(100 - AUTO_ATTACK_VARIANCE, 100 + AUTO_ATTACK_VARIANCE)
-                / 100
-            )
-        )
+        """
+        auto attack damage is calculated from modified ATK with a variance percentage
+        """
+
+        damage = self.get_input_variance(self.get_attack_damage(), AUTO_ATTACK_VARIANCE)
 
         is_crit = self.roll_crit()
 
         if is_crit:
             damage = int(damage * 1.5)
 
-        did_dodge = entity.roll_dodge()
+        did_dodge = entity.roll_AGI()
 
         if did_dodge and not is_crit:
             self.notify(
-                f"Attacking {entity}.\n{entity} dodges the attack taking no damage.",
+                f"Attacking {entity}.\n**{entity} dodges** the attack taking no damage.",
                 COLOR_YELLOW,
             )
             entity.notify(
-                f"You were attacked by {self}.\nYou dodged the attack taking no damage."
+                f"You were attacked by {self}.\n**You dodged** the attack taking no damage."
             )
 
             return
@@ -157,28 +192,41 @@ class Entity:
 
         self.notify(
             (
-                ("CRITICAL HIT!\n" if is_crit else "")
-                + f"Attacked {entity} dealing {damage_dealt} DAMAGE.\nEnemy HP is now {entity.HP}."
+                ("**CRITICAL HIT!**\n" if is_crit else "")
+                + f"Attacked {entity} **dealing {damage_dealt}** DAMAGE.\nEnemy HP is now **{entity.HP}**."
             ),
             COLOR_GREEN,
         )
 
         entity.notify(
-            ("CRITICAL HIT!\n" if is_crit else "")
-            + f"You got attacked by {self} losing {damage_dealt} HP.\nHP is now {entity.HP}.",
+            ("**CRITICAL HIT**!\n" if is_crit else "")
+            + f"You got attacked by {self} **losing {damage_dealt}** HP.\nHP is now **{entity.HP}**.",
             COLOR_RED,
         )
 
         if entity.HP <= 0:
             entity.die()
 
-            entity.notify("You Died.", COLOR_RED)
             self.notify("Target eliminated.", COLOR_CYAN)
             return True
+
+    def take_damage(self, damage: int, entity=None):
+        self.HP -= damage
+
+        if self.HP <= 0:
+            self.die()
+
+            if entity:
+                entity.notify("Target eliminated", COLOR_CYAN)
+
+    def OnTakeDamage(self):
+        for effect in self.status_effects:
+            effect.OnTakeDamage()
 
     def die(self):
         print(f"{self} dies.")
         self.cell.entities.pop(self)
+        self.notify("You Died.", COLOR_RED)
 
     def notify(self, description, color=COLOR_YELLOW):
         return

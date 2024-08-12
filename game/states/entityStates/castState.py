@@ -5,7 +5,7 @@ from game.states.entityStates.followState import follow
 
 
 class CastState(State):
-    def __init__(self, entity, skill: Skill):
+    def __init__(self, entity, skill: Skill, previous_state: State):
         super().__init__(entity)
 
         self.name = "cast"
@@ -13,15 +13,15 @@ class CastState(State):
         self.is_movement_locked = True
 
         self.casting = False
-
-    def OnEnter(self):
-        self.skill.use()
+        self.previous_state = previous_state
 
     def OnUpdate(self):
         target = self.skill.target
         entity = self.entity
+        print(f"{self.entity} is using a skill")
 
         if not target or target.cell != entity.cell:
+            print("Exiting now.")
             self.Exit()
             return
 
@@ -33,10 +33,15 @@ class CastState(State):
 
             self.casting = True
             self.skill.use()
-
-        print(f"{self.entity} is casting {self.skill}.")
+            return
 
         if self.skill.cast():
             self.Exit()
 
         self.entity.is_attacking = True
+
+    def Exit(self):
+        if self.previous_state:
+            self.entity.stateManager.changeState(self.previous_state)
+        else:
+            super().Exit()

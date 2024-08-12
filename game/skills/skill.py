@@ -8,7 +8,7 @@ class Skill:
         self.cooldown_timeout = 0
         self.entity = entity
 
-        self.range = 5
+        self.range = 16
 
         self.casting_time = 1
         self.casting_timeout = 0
@@ -57,7 +57,8 @@ class Skill:
 
         self.casting = True
         self.casting_timeout = self.casting_time
-        print("Started casting", self)
+        print(f"{self.entity} is casting {self.name}.")
+        self.entity.notify(f"Casting {self.name} now.")
 
     def activate(self):
         self.casting = False

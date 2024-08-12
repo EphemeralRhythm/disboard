@@ -98,7 +98,6 @@ class World:
         events = list(self.discord_events)
         self.discord_events = []
 
-        print("returning ", events)
         return events
 
     def add_command(self, command: Command):
@@ -143,7 +142,17 @@ class World:
             ps = player.skills[index]
             ps.x = skill.x
             ps.y = skill.y
-            ps.target = skill.target
+
+            t = skill.target
+            print(t)
+
+            if t:
+                if t.name == "player":
+                    target = self.get_player(t.id)
+                else:
+                    target = player.cell.entities.get(t.id)
+
+                ps.target = target
 
             player.cast(ps)
 
