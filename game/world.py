@@ -162,5 +162,5 @@ class World:
                 {"_id": player.id}, {"$set": {"channel_id": command.x}}
             )
 
-    def get_targetable_entities(self, player: Player):
-        return player.cell.get_targetable_entities(player)
+    def get_targetable_entities(self, player: Player, x=0, y=0):
+        return player.cell.get_targetable_entities(player, x, y)

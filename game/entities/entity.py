@@ -1,5 +1,4 @@
 import random
-
 from game.states.entityStates.idleState import IdleState
 from game.states.state import State
 from game.states.stateManager import StateManager
@@ -39,13 +38,13 @@ class Entity:
 
         self.MAX_HP = 0
         self.MAX_MP = 0
-        self.level = 0
+        self.LEVEL = 0
 
         self.HP = 100
         self.ATK = 20
         self.AGI = 10
         self.DEF = 10
-        self.CRIT = 10
+        self.CRIT = 40
 
         self.attackRange = 16
 
@@ -100,6 +99,9 @@ class Entity:
 
     def changeState(self, state: State):
         self.stateManager.changeState(state)
+
+    def is_movement_locked(self):
+        return self.stateManager.currentState.is_movement_locked
 
     def get_attack_damage(self) -> int:
         """
@@ -233,3 +235,6 @@ class Entity:
 
     def update_location(self):
         pass
+
+    def is_silenced(self):
+        return any([e.silenced for e in self.status_effects])

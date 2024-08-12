@@ -33,6 +33,7 @@ class FollowState(State):
         self.entity = entity
         self.target = target
         self.name = "follow"
+        self.action_name = "following"
         self.path = None
 
     def reached_target(self):

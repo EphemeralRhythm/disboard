@@ -4,6 +4,9 @@ class StatusEffect:
         self.entity = entity
         self.remaining_time = 1
 
+        self.silence = False
+        self.lock = False
+
     def update(self):
         """
         returns true is the status effect expired

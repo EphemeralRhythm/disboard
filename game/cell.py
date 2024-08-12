@@ -53,8 +53,14 @@ class Cell:
     def get_all_entities(self):
         return list(self.entities.values()) + list(self.players)
 
-    def get_targetable_entities(self, player: Player):
+    def get_targetable_entities(self, player: Player, x=0, y=0):
+        x += player.x
+        y += player.y
+
         def is_attackable(e: Entity):
+            if abs(x - e.x) + abs(y - e.y) > 16 * 5:
+                return False
+
             if isinstance(e, Player):
                 return e.id != player.id and not player.is_ally(e)
 

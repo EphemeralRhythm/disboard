@@ -4,7 +4,7 @@ from game.entities.entity import Entity
 from game.states.entityStates.followState import follow
 
 
-class MobAttackState(State):
+class AttackState(State):
     def __init__(self, entity: Entity, target: Entity):
         super().__init__(entity)
         self.name = "attack"

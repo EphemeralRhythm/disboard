@@ -9,6 +9,7 @@ class CastState(State):
         super().__init__(entity)
 
         self.name = "cast"
+        self.action_name = "casting"
         self.skill = skill
         self.is_movement_locked = True
 

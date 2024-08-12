@@ -1,9 +1,9 @@
 from game.entities.entity import Entity
 from PIL import Image
 
+from game.states.entityStates.attackState import AttackState
 from game.states.entityStates.moveState import MoveState
 from game.states.entityStates.castState import CastState
-from game.states.mobStates.mobAttackState import MobAttackState
 
 from game.skills.generic.fireball import Fireball
 from utils.constants import COLOR_YELLOW
@@ -63,14 +63,11 @@ class Player(Entity):
     def is_ally(self, other_player):
         return False
 
-    def is_movement_locked(self):
-        return self.stateManager.currentState.is_movement_locked
-
     def move(self, x, y):
         self.stateManager.changeState(MoveState(self, x, y), True)
 
     def attack(self, target: Entity):
-        self.stateManager.changeState(MobAttackState(self, target), True)
+        self.stateManager.changeState(AttackState(self, target), True)
 
     def cast(self, skill):
         self.stateManager.changeState(

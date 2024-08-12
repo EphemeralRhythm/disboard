@@ -14,6 +14,7 @@ class MoveState(State):
         self.path = None
         self.x = x
         self.y = y
+        self.action_name = "moving"
 
     def reached_target(self):
         return (

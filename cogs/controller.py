@@ -6,7 +6,12 @@ from discord.ext import commands
 from game.command import Command
 from modules.combat import send_target_select, get_skills_embed
 from utils.constants import COLOR_RED
-from modules.game import check_player, check_player_alive
+from modules.game import (
+    check_player,
+    check_player_alive,
+    check_player_silenced,
+    check_player_locked,
+)
 
 
 class Controller(commands.Cog):
@@ -18,8 +23,8 @@ class Controller(commands.Cog):
         if not (player := await check_player_alive(self.client, ctx)):
             return
 
-        if player.is_movement_locked():
-            await ctx.send("Unable to do that.")
+        if await check_player_locked(player, ctx):
+            return
 
         if len(args) != 2:
             await ctx.send("Invalid syntax.")
@@ -35,14 +40,22 @@ class Controller(commands.Cog):
         await ctx.send("Command updated!")
 
     @commands.command(name="attack")
-    async def attack(self, ctx):
+    async def attack(self, ctx, *args):
         if not (player := await check_player_alive(self.client, ctx)):
             return
 
-        if player.is_movement_locked():
-            await ctx.send("Unable to do that.")
+        if await check_player_locked(player, ctx):
+            return
 
-        targets = self.client.world.get_targetable_entities(player)
+        if len(args) != 2:
+            args = (0, 0)
+
+        for a in args:
+            if not str(a).isdigit():
+                args = (0, 0)
+        args = list(map(int, args))
+
+        targets = self.client.world.get_targetable_entities(player, args[0], args[1])
         target = await send_target_select(
             self.client, targets, player, ctx, "Attack command"
         )
@@ -63,6 +76,11 @@ class Controller(commands.Cog):
             command = await skill.initialize(player, ctx, self.client)
 
             if command:
+                if await check_player_silenced(
+                    player, ctx
+                ) or await check_player_locked(player, ctx):
+                    return
+
                 self.client.world.add_command(command)
                 await ctx.send(f"Command added to queue, casting {skill.name}")
 

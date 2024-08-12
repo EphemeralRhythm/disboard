@@ -6,6 +6,7 @@ class IdleState(State):
         super().__init__(entity)
 
         self.name = "idle"
+        self.action_name = "idling"
 
     def OnUpdate(self):
         print(f"{self.entity} is idling.")
