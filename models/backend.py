@@ -9,6 +9,7 @@ class Backend:
 
     def update_game(self):
         self.world.init_players()
+        self.world.init_entities()
 
         while True:
             self.world.update()

@@ -1,6 +1,7 @@
 from collections import deque
 from game.command import Command
 
+from game.entities.mobs.slime.slime import Slime
 import utils.database as db
 
 from game.cell import Cell
@@ -54,6 +55,10 @@ class World:
     def init_players(self):
         for player in db.players_collection.find():
             self.add_player(player)
+
+    def init_entities(self):
+        slime = Slime(24 * 16, 32 * 16, 0, 0, self)
+        slime.cell.spawn_entity(slime)
 
     def has_player(self, id):
         return db.players_collection.find_one({"_id": id}) is not None

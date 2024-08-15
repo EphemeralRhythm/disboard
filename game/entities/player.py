@@ -1,6 +1,7 @@
 from game.entities.entity import Entity
 from PIL import Image
 
+from game.skills.generic.shield_bash import ShieldBash
 from game.states.entityStates.attackState import AttackState
 from game.states.entityStates.moveState import MoveState
 from game.states.entityStates.castState import CastState
@@ -25,9 +26,13 @@ class Player(Entity):
         self.size = (64, 64)
         self.channel_id = db_post.get("channel_id")
 
-        skill = Fireball(self)
+        fireball = Fireball(self)
+        shield_bash = ShieldBash(self)
 
-        self.skills = [skill]
+        self.skills = [fireball, shield_bash]
+
+        self.attackRange = 500
+        self.ATK = 300
 
     def __repr__(self):
         return (self.color + " " + self.player_class).title()

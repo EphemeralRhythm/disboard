@@ -43,19 +43,24 @@ class Cell:
         self.players.remove(player)
         return True
 
+    def spawn_entity(self, entity):
+        self.entities[entity.id] = entity
+
     def __repr__(self) -> str:
         return f"[Cell] : [id: {self.id}, r: {self.grid_r}, c: {self.grid_c}]"
 
     def update(self):
+
         for entity in self.entities:
-            entity.update()
+            print(entity)
+            self.entities[entity].update()
 
     def get_all_entities(self):
         return list(self.entities.values()) + list(self.players)
 
     def get_targetable_entities(self, player: Player, x=0, y=0):
-        x += player.x
-        y += player.y
+        x = player.x + x * 16
+        y = player.y - y * 16
 
         def is_attackable(e: Entity):
             if abs(x - e.x) + abs(y - e.y) > 16 * 5:

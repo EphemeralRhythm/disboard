@@ -1,7 +1,4 @@
 from game.states.state import State
-from game.utils import distance
-from game.skills.skill import Skill
-from game.states.entityStates.followState import follow
 
 from utils.constants import COLOR_YELLOW
 
@@ -16,6 +13,7 @@ class StunnedState(State):
         self.time_remaining = timeout
 
     def OnUpdate(self):
+        print(f"{self.entity} is stunned. {self.time_remaining} remaining.")
         if self.time_remaining == 0:
             self.Exit()
 

@@ -1,39 +1,41 @@
 from game.entities.entity import Entity
 from game.states.state import State
 from game.utils import distance
-from game.entities.mobs.mob import Mob
 from game.states.mobStates.mobAttackState import MobAttackState
+from random import shuffle
 
 
 class MobIdleState(State):
-    def __init__(self, entity: Mob):
+    def __init__(self, entity):
         super().__init__(entity)
         self.name = "idle"
         self.action_name = "idling"
         self.entity = entity
+        self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
     def OnUpdate(self):
-        table = self.entity.aggro_table
+        print(f"{self.entity} is idling.")
 
-        if len(table) == 0 or (mx := max(table.values())) < self.entity.AGGRO_THRESHOLD:
-            return
+        grid = self.entity.cell.terrain
+        r, c = self.entity.y // 16, self.entity.x // 16
 
-        players = [(_id, table[_id]) for _id in table.values()]
+        cur_height = grid[r][c]
+        rows = len(grid)
+        cols = len(grid[0])
 
-        players.sort(key=lambda a: a[1])
+        shuffle(self.directions)
+        for dr, dc in self.directions:
+            nr = r + dr
+            nc = c + dc
 
-        cell = self.entity.cell
-        _id = players[-1][0]
-        player = None
-        while players:
-            player = self.entity.world.get_player(_id)
+            if nr < 0 or nr >= rows or nc < 0 or nc >= cols:
+                continue
 
-            if not player or player.cell != cell:
-                players.pop()
-            else:
-                break
+            if abs(grid[nr][nc] - cur_height) > 1:
+                continue
 
-        if not player:
-            return
+            self.entity.x = nc * 16
+            self.entity.y = nr * 16
+            break
 
-        self.entity.stateManager.changeState(MobAttackState(self.entity, player))
+        # self.entity.update_aggro()

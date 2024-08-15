@@ -22,7 +22,6 @@ class CastState(State):
         print(f"{self.entity} is using a skill")
 
         if not target or target.cell != entity.cell:
-            print("Exiting now.")
             self.Exit()
             return
 

@@ -1,5 +1,6 @@
 import random
 from game.states.entityStates.idleState import IdleState
+from game.states.entityStates.stunnedState import StunnedState
 from game.states.state import State
 from game.states.stateManager import StateManager
 from models.interface.discord_event import DiscordEvent
@@ -11,6 +12,7 @@ from utils.constants import (
     AUTO_ATTACK_VARIANCE,
     ATK_DEF_VARIANCE,
 )
+from collections import defaultdict
 
 
 class Entity:
@@ -65,6 +67,11 @@ class Entity:
         self.skills = []
         self.status_effects = []
         self.gear = []
+
+        self.enemies_within_radius = []
+        self.aggro_table = {}
+        self.aggro_radius = 8
+        self.AGGRO_THRESHOLD = 100
 
     def __repr__(self):
         return f"{self.name}"
@@ -188,8 +195,6 @@ class Entity:
         damage_absorbed = int(entity.roll_DEF())
         damage_dealt = max(damage - damage_absorbed, 0)
 
-        entity.HP -= damage_dealt
-
         print(f"{entity} is taking damage from {self}. HP is now {entity.HP}")
 
         self.notify(
@@ -206,11 +211,7 @@ class Entity:
             COLOR_RED,
         )
 
-        if entity.HP <= 0:
-            entity.die()
-
-            self.notify("Target eliminated.", COLOR_CYAN)
-            return True
+        entity.take_damage(damage_dealt, self)
 
     def take_damage(self, damage: int, entity=None):
         self.HP -= damage
@@ -220,15 +221,23 @@ class Entity:
 
             if entity:
                 entity.notify("Target eliminated", COLOR_CYAN)
+            return
+
+        self.OnTakeDamage()
 
     def OnTakeDamage(self):
         for effect in self.status_effects:
             effect.OnTakeDamage()
 
+        self.stateManager.currentState.OnTakeDamage()
+
     def die(self):
+        # player death is overriden in the player class
         print(f"{self} dies.")
-        self.cell.entities.pop(self)
-        self.notify("You Died.", COLOR_RED)
+        if self.cell and self.id in self.cell.entities:
+            self.cell.entities.pop(self.id)
+
+        del self
 
     def notify(self, description, color=COLOR_YELLOW):
         return
@@ -238,3 +247,9 @@ class Entity:
 
     def is_silenced(self):
         return any([e.silenced for e in self.status_effects])
+
+    def update_aggro(self):
+        pass
+
+    def get_stunned(self, time):
+        self.stateManager.changeState(StunnedState(self, time))

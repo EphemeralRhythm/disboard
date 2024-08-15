@@ -48,11 +48,18 @@ class Controller(commands.Cog):
             return
 
         if len(args) != 2:
-            args = (0, 0)
+            args = ("0", "0")
+
+        def isdigit(a):
+            for c in a:
+                if c not in "0123456789-":
+                    return False
+            return True
 
         for a in args:
-            if not str(a).isdigit():
+            if not isdigit(a):
                 args = (0, 0)
+
         args = list(map(int, args))
 
         targets = self.client.world.get_targetable_entities(player, args[0], args[1])
