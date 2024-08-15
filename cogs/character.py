@@ -8,7 +8,7 @@ from game.command import Command
 
 async def get_classes(ctx: discord.AutocompleteContext):
     if ctx.interaction.user.id == 660929334969761792:
-        return ["warrior", "paladin", "theif"]
+        return ["warrior", "paladin", "thief"]
     else:
         return ["mage", "summoner"]
 

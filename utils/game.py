@@ -5,7 +5,7 @@ CLASSES = [
     "druid",
     # dps
     "archer",
-    "theif",
+    "thief",
     "mage",
     # support
     "priest",
