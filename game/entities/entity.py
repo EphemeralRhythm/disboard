@@ -3,7 +3,6 @@ from game.states.entityStates.idleState import IdleState
 from game.states.entityStates.stunnedState import StunnedState
 from game.states.state import State
 from game.states.stateManager import StateManager
-from models.interface.discord_event import DiscordEvent
 from utils.constants import (
     COLOR_CYAN,
     COLOR_GREEN,
@@ -12,7 +11,6 @@ from utils.constants import (
     AUTO_ATTACK_VARIANCE,
     ATK_DEF_VARIANCE,
 )
-from collections import defaultdict
 
 
 class Entity:
@@ -236,6 +234,7 @@ class Entity:
         print(f"{self} dies.")
         if self.cell and self.id in self.cell.entities:
             self.cell.entities.pop(self.id)
+        self.cell = None
 
         del self
 

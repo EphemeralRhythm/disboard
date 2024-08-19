@@ -1,15 +1,20 @@
 CLASSES = [
     # tanks
-    "paladin",
-    "warrior",
-    "druid",
-    # dps
+    "guardian",
+    "samurai",
+    "monk",
+    # weapon attack
     "archer",
+    "assassin",
     "thief",
-    "mage",
+    "swashbuckler",
+    "bard",
     # support
-    "priest",
-    "bishop",
+    "kannagi",
+    "cleric",
+    "druid",
+    # magic attack
+    "sorcerer",
 ]
 
 
