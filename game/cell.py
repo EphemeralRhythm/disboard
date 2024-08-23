@@ -63,6 +63,12 @@ class Cell:
         y = player.y - y * 16
 
         def is_attackable(e: Entity):
+            if e.is_stealthed():
+                return False
+
+            if e.dead:
+                return False
+
             if abs(x - e.x) + abs(y - e.y) > 16 * 5:
                 return False
 

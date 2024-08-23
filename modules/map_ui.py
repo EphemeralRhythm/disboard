@@ -51,15 +51,16 @@ def draw_map(x: int, y: int, map_cell, zoomed=False, unit=None):
 
     if unit:
 
-        player = map_entities[0]
+        player = unit
         node_x = player.x - player.x % 16
         node_y = player.y - player.y % 16
         print(node_x, node_y)
 
-        draw.rounded_rectangle((node_x, node_y, node_x + 16, node_y + 16), fill="red")
+        # draw.rounded_rectangle((node_x, node_y, node_x + 16, node_y + 16), fill="red")
 
     for entity in map_entities:
-        entity.draw(map_image)
+        if not entity.is_stealthed() or entity == unit:
+            entity.draw(map_image)
 
     for entity in map_entities:
         pass

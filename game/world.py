@@ -149,7 +149,6 @@ class World:
             ps.y = skill.y
 
             t = skill.target
-            print(t)
 
             if t:
                 if t.name == "player":
@@ -159,6 +158,7 @@ class World:
 
                 ps.target = target
 
+            print("casting", skill)
             player.cast(ps)
 
         elif command.name == "set_channel":

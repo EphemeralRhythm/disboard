@@ -38,4 +38,4 @@ class MobIdleState(State):
             self.entity.y = nr * 16
             break
 
-        # self.entity.update_aggro()
+        self.entity.update_aggro()

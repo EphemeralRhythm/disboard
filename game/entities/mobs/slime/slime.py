@@ -10,13 +10,13 @@ class Slime(Mob):
         self.LEVEL = 30
 
         self.ATK = 12
-        self.size = (64, 64)
+        self.size = (32, 32)
 
         self.init_from_spawn(x, y, grid_r, grid_c)
 
     def draw(self, map_image):
         unit_image = Image.open(
-            "./assets/images/entities/player/priest/female/purple/idle.png"
+            "./assets/images/entities/player/kannagi/female/purple/idle.png"
         )
 
         map_image.paste(unit_image, (self.x - 12, self.y - 16), unit_image)

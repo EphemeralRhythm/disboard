@@ -8,6 +8,7 @@ class Skill:
         self.cooldown_timeout = 0
         self.entity = entity
 
+        self.use_range = 15 * 16
         self.range = 16
 
         self.casting_time = 1
@@ -22,6 +23,12 @@ class Skill:
         self.x = x
         self.y = y
         self.target = target
+
+        self.IS_PASSIVE = False
+        self.GENERATES_THREAT = True
+        self.REMOVES_STEALTH = True
+        self.ALLOW_WHILE_STUNNED = False
+        self.REQUIRES_TARGET = False
 
     def cast(self):
         assert self.casting, "Attempted to update before casting started"
@@ -66,8 +73,6 @@ class Skill:
         self.active_timeout = self.active_time
 
     def effect(self):
-        print("skill effect is taking place")
-        return
         raise NotImplementedError()
 
     def __repr__(self):

@@ -89,7 +89,7 @@ class Controller(commands.Cog):
                     return
 
                 self.client.world.add_command(command)
-                await ctx.send(f"Command added to queue, casting {skill.name}")
+                await ctx.send(f"Command added to queue, using the skill {skill.name}")
 
 
 def setup(client):

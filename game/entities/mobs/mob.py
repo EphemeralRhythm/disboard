@@ -39,12 +39,19 @@ class Mob(Entity):
         mp = {}
 
         for enemy, dist in enemies:
+            if enemy.dead:
+                continue
+
             if enemy not in aggro_table:
                 aggro_table[enemy] = 0
 
+            if enemy.is_stealthed():
+                mp[enemy] = aggro_table[enemy]
+                continue
+
             distance_factor = 30
 
-            if dist <= 2:
+            if dist < 2:
                 distance_factor = 100
             elif dist <= 6:
                 distance_factor = 80
@@ -83,7 +90,7 @@ class Mob(Entity):
         new_target = None
 
         for e in aggro_table:
-            if aggro_table[e] > mx:
+            if aggro_table[e] > mx and not e.is_stealthed():
                 mx = aggro_table[e]
                 new_target = e
 

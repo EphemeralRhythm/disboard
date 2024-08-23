@@ -11,7 +11,8 @@ class Fireball(EntityTargetSkill):
 
     def effect(self):
         assert self.target, f"Skill {self} has no target"
-        self.target.take_damage(self.damage, self.entity)
+
         self.entity.notify(
             f"Attacked {self.target} with a fireball dealing {self.damage} damage."
         )
+        self.target.take_damage(self.damage, self.entity)

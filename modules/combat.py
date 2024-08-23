@@ -4,6 +4,71 @@ import asyncio
 from utils.constants import COLOR_BLUE
 
 
+async def get_location(client, ctx, player, prompt, max_range=0):
+    await ctx.send(prompt)
+
+    def check(m: discord.Message):
+        return m.author.id == ctx.author.id
+
+    msg = None
+    try:
+        msg = await client.wait_for("message", timeout=20, check=check)
+
+    except asyncio.TimeoutError:
+        return None
+
+    print(msg.content)
+
+    content = msg.content.split()
+    if not len(content) == 2:
+        return None
+
+    try:
+        x, y = map(int, content)
+
+    except ValueError:
+        return None
+
+    if abs(x) + abs(y) > max_range:
+        await ctx.send("Location entered is too far.")
+        return None
+
+    return (x, y)
+
+
+async def get_accessible_location(
+    client, ctx, player, prompt="Enter the location", max_range=0
+):
+    loc = await get_location(client, ctx, player, prompt, max_range)
+
+    if not loc:
+        await ctx.send("Invalid location.")
+        return None
+
+    x, y = loc
+
+    nx = player.x + x * 16
+    ny = player.y - y * 16
+
+    nr = ny // 16
+    nc = nx // 16
+
+    grid = player.cell.terrain
+
+    rows = len(grid)
+    cols = len(grid[0])
+
+    if nr < 0 or nr >= rows or nc < 0 or nc >= cols:
+        await ctx.send("Location input is out of bounds.")
+        return None
+
+    if grid[nr][nc] == -2:
+        await ctx.send("Location is inaccessible.")
+        return None
+
+    return (nx, ny)
+
+
 async def send_target_select(client, targets, player, ctx, title):
 
     embed = discord.Embed(title=title, color=COLOR_BLUE)

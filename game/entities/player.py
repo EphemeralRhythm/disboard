@@ -1,5 +1,5 @@
 from game.entities.entity import Entity
-from PIL import Image
+from PIL import Image, ImageEnhance
 
 from game.skills.generic.shield_bash import ShieldBash
 from game.states.entityStates.attackState import AttackState
@@ -7,6 +7,10 @@ from game.states.entityStates.moveState import MoveState
 from game.states.entityStates.castState import CastState
 
 from game.skills.generic.fireball import Fireball
+from game.skills.classes.assassin.ghost_step import GhostStep
+from game.skills.classes.assassin.shadow_cloak import ShadowCloak
+from game.skills.classes.assassin.phantom_blink import PhantomBlink
+
 from utils.constants import COLOR_YELLOW
 
 import utils.database as db
@@ -23,16 +27,19 @@ class Player(Entity):
         self.gender = db_post["gender"]
         self.color = db_post["color"]
 
-        self.size = (64, 64)
+        self.size = (32, 32)
         self.channel_id = db_post.get("channel_id")
 
         fireball = Fireball(self)
         shield_bash = ShieldBash(self)
+        ghost_step = GhostStep(self)
+        shadow_cloak = ShadowCloak(self)
+        phantom_blink = PhantomBlink(self)
 
-        self.skills = [fireball, shield_bash]
+        self.skills = [fireball, shield_bash, ghost_step, shadow_cloak, phantom_blink]
 
         self.attackRange = 500
-        self.ATK = 300
+        self.ATK = 20
 
     def __repr__(self):
         return (self.color + " " + self.player_class).title()
@@ -62,6 +69,11 @@ class Player(Entity):
 
         if flipped:
             unit_image = unit_image.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+
+        if self.is_stealthed():
+            alpha = unit_image.split()[3]
+            alpha = ImageEnhance.Brightness(alpha).enhance(0.5)
+            unit_image.putalpha(alpha)
 
         map_image.paste(unit_image, (self.x - 12, self.y - 16), unit_image)
 
@@ -97,6 +109,8 @@ class Player(Entity):
         if self.cell:
             self.cell.remove_player(self)
             self.cell = self.world.dead_pool
+
+        self.notify("You died")
 
     def update_location(self):
         db.players_collection.update_one(

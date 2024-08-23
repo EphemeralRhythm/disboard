@@ -81,6 +81,9 @@ class Entity:
         self.grid_c = post["grid_c"]
         self.HP = post["hp"]
 
+        self.dir_x = 0
+        self.dir_y = -1
+
     def init_from_spawn(self, x, y, grid_r, grid_c):
         self.x = x
         self.y = y
@@ -101,6 +104,12 @@ class Entity:
 
         for skill in self.skills:
             skill.update()
+
+        effects = []
+        for e in self.status_effects:
+            if e.update():
+                effects.append(e)
+        self.status_effects = effects
 
     def changeState(self, state: State):
         self.stateManager.changeState(state)
@@ -170,6 +179,8 @@ class Entity:
         auto attack damage is calculated from modified ATK with a variance percentage
         """
 
+        self.remove_stealth()
+
         damage = self.get_input_variance(self.get_attack_damage(), AUTO_ATTACK_VARIANCE)
 
         is_crit = self.roll_crit()
@@ -193,23 +204,22 @@ class Entity:
         damage_absorbed = int(entity.roll_DEF())
         damage_dealt = max(damage - damage_absorbed, 0)
 
-        print(f"{entity} is taking damage from {self}. HP is now {entity.HP}")
-
         self.notify(
             (
                 ("**CRITICAL HIT!**\n" if is_crit else "")
-                + f"Attacked {entity} **dealing {damage_dealt}** DAMAGE.\nEnemy HP is now **{entity.HP}**."
+                + f"Attacked {entity} **dealing {damage_dealt}** DAMAGE.\nEnemy HP is now **{entity.HP - damage_dealt}**."
             ),
             COLOR_GREEN,
         )
 
         entity.notify(
             ("**CRITICAL HIT**!\n" if is_crit else "")
-            + f"You got attacked by {self} **losing {damage_dealt}** HP.\nHP is now **{entity.HP}**.",
+            + f"You got attacked by {self} **losing {damage_dealt}** HP.\nHP is now **{entity.HP - damage_dealt}**.",
             COLOR_RED,
         )
 
         entity.take_damage(damage_dealt, self)
+        print(f"{entity} is taking damage from {self}. HP is now {entity.HP}")
 
     def take_damage(self, damage: int, entity=None):
         self.HP -= damage
@@ -244,11 +254,25 @@ class Entity:
     def update_location(self):
         pass
 
+    def add_status_effect(self, e):
+        self.status_effects.append(e)
+
     def is_silenced(self):
         return any([e.silenced for e in self.status_effects])
+
+    def is_stealthed(self):
+        return any([e.name == "stealth" for e in self.status_effects])
+
+    def remove_stealth(self):
+        self.status_effects = list(
+            filter(lambda x: x.name != "stealth", self.status_effects)
+        )
 
     def update_aggro(self):
         pass
 
     def get_stunned(self, time):
         self.stateManager.changeState(StunnedState(self, time))
+
+    def draw(self, map_image):
+        raise NotImplementedError()

@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 from modules.map_ui import draw_map
 
+from modules.game import check_player_alive
+
 
 class Interface(commands.Cog):
     def __init__(self, client):
@@ -9,14 +11,11 @@ class Interface(commands.Cog):
 
     @commands.command(name="map")
     async def _map(self, ctx, *, args=None):
-        players = self.client.world.get_players()
 
-        if str(ctx.author.id) not in players:
-            await ctx.send("You are not a part of the game system.")
+        if not (unit := await check_player_alive(self.client, ctx)):
             return
 
-        unit = players[str(ctx.author.id)]
-        image = draw_map(unit.x, unit.y, unit.cell, bool(args))
+        image = draw_map(unit.x, unit.y, unit.cell, bool(args), unit)
 
         path = f"./assets/images/player_maps/{ctx.author.id}.png"
         image.save(path)

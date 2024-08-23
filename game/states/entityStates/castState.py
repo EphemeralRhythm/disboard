@@ -21,19 +21,23 @@ class CastState(State):
         entity = self.entity
         print(f"{self.entity} is using a skill")
 
-        if not target or target.cell != entity.cell:
-            self.Exit()
-            return
-
-        if not self.casting:
-            if distance(target, entity) > self.skill.range:
-                if not follow(entity, target):
-                    self.Exit()
+        if self.skill.REQUIRES_TARGET:
+            if not target or target.cell != entity.cell:
+                self.Exit()
                 return
 
+            if not self.casting:
+                if distance(target, entity) > self.skill.range:
+                    if not follow(entity, target):
+                        self.Exit()
+                    return
+
+        if self.skill.REMOVES_STEALTH:
+            self.entity.remove_stealth()
+
+        if not self.casting:
             self.casting = True
             self.skill.use()
-            return
 
         if self.skill.cast():
             self.Exit()

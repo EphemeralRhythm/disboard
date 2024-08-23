@@ -4,7 +4,7 @@ class StatusEffect:
         self.entity = entity
         self.remaining_time = 1
 
-        self.silence = False
+        self.silenced = False
         self.lock = False
 
     def update(self):
@@ -14,7 +14,7 @@ class StatusEffect:
 
         self.remaining_time -= 1
         self.effect()
-        return self.remaining_time <= 0
+        return self.remaining_time > 0
 
     def effect(self):
         raise NotImplementedError()
