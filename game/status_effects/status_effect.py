@@ -1,8 +1,8 @@
 class StatusEffect:
-    def __init__(self, name, entity):
+    def __init__(self, name, entity, remaining_time):
         self.name = name
         self.entity = entity
-        self.remaining_time = 1
+        self.remaining_time = remaining_time + 1
 
         self.silenced = False
         self.lock = False
