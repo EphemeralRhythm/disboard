@@ -6,11 +6,12 @@ class GhostStep(LocationTargetSkill):
     def __init__(self, entity):
         super().__init__("Ghost Step", 10, entity)
 
-        self.active_time = 4
+        self.active_time = 3
         self.casting_time = 1
 
     def effect(self):
-        if self.active_timeout == 4:
+        print("ACTIVE TIMEOUT", self.active_timeout)
+        if self.active_timeout == 3:
             e = StealthStatusEffect(self.entity, 3)
             self.entity.add_status_effect(e)
 
