@@ -21,12 +21,14 @@ async def get_location(client, ctx, player, prompt, max_range=0):
 
     content = msg.content.split()
     if not len(content) == 2:
+        await ctx.send("Invalid location.")
         return None
 
     try:
         x, y = map(int, content)
 
     except ValueError:
+        await ctx.send("Invalid location.")
         return None
 
     if abs(x) + abs(y) > max_range:
@@ -42,7 +44,6 @@ async def get_accessible_location(
     loc = await get_location(client, ctx, player, prompt, max_range)
 
     if not loc:
-        await ctx.send("Invalid location.")
         return None
 
     x, y = loc

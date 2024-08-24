@@ -8,10 +8,11 @@ class GhostStep(LocationTargetSkill):
 
         self.active_time = 3
         self.casting_time = 1
+        self.use_range = 8
 
     def effect(self):
         if self.active_timeout == 3:
-            e = StealthStatusEffect(self.entity, 3)
+            e = StealthStatusEffect(self.entity, 2)
             self.entity.add_status_effect(e)
 
         if self.active_timeout == 1:
