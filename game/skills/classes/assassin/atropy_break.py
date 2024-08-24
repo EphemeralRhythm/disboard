@@ -18,5 +18,10 @@ class AtrophyBreak(EntityTargetSkill):
         self.entity.notify(
             f"Attacked {self.target} with Atrophy Break {self.damage} damage and stunning the enemy for {self.stun_time} ticks."
         )
+
         self.target.take_damage(self.damage, self.entity)
         self.target.get_stunned(self.stun_time)
+        self.target.notify(
+            f"{self.entity} attacked you using Atrophy Break dealing {self.damage} and stunning you for {self.stun_time} ticks."
+            + f"\nYour HP is now {self.target.HP}"
+        )

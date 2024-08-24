@@ -14,5 +14,7 @@ class Blind(EntityTargetSkill):
     def effect(self):
         assert self.target, f"Skill {self} has no target"
 
-        self.entity.notify(f"Used Blind on {self.target}.")
+        self.entity.notify(
+            f"Used Blind on {self.target}.\nThe target is now blind for {self.blind_time} ticks."
+        )
         self.target.get_disoriented(self.blind_time)

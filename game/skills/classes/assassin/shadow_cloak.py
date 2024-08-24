@@ -12,3 +12,4 @@ class ShadowCloak(InplaceSkill):
     def effect(self):
         e = StealthStatusEffect(self.entity, 600)
         self.entity.add_status_effect(e)
+        self.entity.notify("Activated the skill Shadow Cloak. You are invisible now.")

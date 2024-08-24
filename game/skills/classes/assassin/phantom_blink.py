@@ -37,3 +37,5 @@ class PhantomBlink(EntityTargetSkill):
 
         self.entity.dir_x = -target.dir_x
         self.entity.dir_y = -target.dir_y
+
+        self.entity.notify(f"Used the skill Phantom Blink to teleport behind {target}.")

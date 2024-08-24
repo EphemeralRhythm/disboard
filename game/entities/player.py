@@ -105,7 +105,7 @@ class Player(Entity):
             self.cell.remove_player(self)
             self.cell = self.world.dead_pool
 
-        self.notify("You died")
+        self.notify("**You died.**\nYour deeds of heroism will be remembered.")
 
     def update_location(self):
         db.players_collection.update_one(
