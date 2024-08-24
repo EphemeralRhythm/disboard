@@ -8,7 +8,7 @@ class GhostStep(LocationTargetSkill):
 
         self.active_time = 3
         self.casting_time = 1
-        self.use_range = 8
+        self.use_range = 7
 
     def effect(self):
         if self.active_timeout == 3:
