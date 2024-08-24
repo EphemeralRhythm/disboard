@@ -65,7 +65,7 @@ class Skill:
         self.casting = True
         self.casting_timeout = self.casting_time
         print(f"{self.entity} is casting {self.name}.")
-        self.entity.notify(f"Casting {self.name} now.")
+        self.entity.notify(f"Using the skill {self.name}.")
 
     def activate(self):
         self.casting = False

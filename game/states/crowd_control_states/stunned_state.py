@@ -14,10 +14,10 @@ class StunnedState(State):
 
     def OnUpdate(self):
         print(f"{self.entity} is stunned. {self.time_remaining} remaining.")
+        self.time_remaining -= 1
+
         if self.time_remaining == 0:
             self.Exit()
-
-        self.time_remaining -= 1
 
     def OnExit(self, canceled=False):
         self.entity.notify("You are no longer stunned.", COLOR_YELLOW)

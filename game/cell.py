@@ -58,7 +58,7 @@ class Cell:
     def get_all_entities(self):
         return list(self.entities.values()) + list(self.players)
 
-    def get_targetable_entities(self, player: Player, x=0, y=0):
+    def get_targetable_entities(self, player: Player, x=0, y=0, reach=5):
         x = player.x + x * 16
         y = player.y - y * 16
 
@@ -69,7 +69,7 @@ class Cell:
             if e.dead:
                 return False
 
-            if abs(x - e.x) + abs(y - e.y) > 16 * 5:
+            if abs(x - e.x) + abs(y - e.y) > 16 * reach:
                 return False
 
             if isinstance(e, Player):

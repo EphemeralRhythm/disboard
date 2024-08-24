@@ -1,15 +1,12 @@
 from game.entities.entity import Entity
 from PIL import Image, ImageEnhance
 
-from game.skills.generic.shield_bash import ShieldBash
 from game.states.entityStates.attackState import AttackState
 from game.states.entityStates.moveState import MoveState
 from game.states.entityStates.castState import CastState
 
-from game.skills.generic.fireball import Fireball
-from game.skills.classes.assassin.ghost_step import GhostStep
-from game.skills.classes.assassin.shadow_cloak import ShadowCloak
-from game.skills.classes.assassin.phantom_blink import PhantomBlink
+from modules.player_loader import update_skills
+
 
 from utils.constants import COLOR_YELLOW
 
@@ -31,15 +28,9 @@ class Player(Entity):
         self.size = (32, 32)
         self.channel_id = db_post.get("channel_id")
 
-        fireball = Fireball(self)
-        shield_bash = ShieldBash(self)
-        ghost_step = GhostStep(self)
-        shadow_cloak = ShadowCloak(self)
-        phantom_blink = PhantomBlink(self)
+        update_skills(self)
 
-        self.skills = [fireball, shield_bash, ghost_step, shadow_cloak, phantom_blink]
-
-        self.attackRange = 500
+        self.attackRange = 16
         self.ATK = 20
 
     def __repr__(self):

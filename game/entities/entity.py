@@ -1,6 +1,7 @@
 import random
 from game.states.entityStates.idleState import IdleState
-from game.states.entityStates.stunnedState import StunnedState
+from game.states.crowd_control_states.stunned_state import StunnedState
+from game.states.crowd_control_states.disoriented_state import DisorientedState
 from game.states.state import State
 from game.states.stateManager import StateManager
 from utils.constants import (
@@ -229,10 +230,13 @@ class Entity:
             self.die()
 
             if entity:
-                entity.notify("Target eliminated", COLOR_CYAN)
+                entity.notify(f"Eliminated the target {self}", COLOR_CYAN)
             return
 
         self.OnTakeDamage()
+
+    def heal(self, heal_amount):
+        self.HP = min(self.MAX_HP, self.HP + heal_amount)
 
     def OnTakeDamage(self):
         for effect in self.status_effects:
@@ -275,6 +279,9 @@ class Entity:
     def get_stunned(self, time):
         self.stateManager.changeState(StunnedState(self, time))
 
+    def get_disoriented(self, time):
+        self.stateManager.changeState(DisorientedState(self, time))
+
     def draw(self, map_image, image_draw):
         raise NotImplementedError()
 
@@ -283,18 +290,18 @@ class Entity:
 
     def draw_hp_bar(self, map_image, image_draw):
         node_x = self.x - self.x % 16
-        node_y = self.y - self.y % 16 + 18
+        node_y = self.y - self.y % 16 - 6
 
         # draw outline
-        image_draw.rectangle((node_x, node_y, node_x + 16, node_y + 3), fill="black")
+        image_draw.rectangle((node_x, node_y, node_x + 16, node_y + 2), fill="black")
 
         # draw red
         image_draw.rectangle(
-            (node_x + 1, node_y + 1, node_x + 15, node_y + 2), fill=(255, 0, 0)
+            (node_x + 1, node_y + 1, node_x + 15, node_y + 1), fill=(255, 0, 0)
         )
 
         hp = int(self.HP / self.MAX_HP * 14)
         # draw green
         image_draw.rectangle(
-            (node_x + 1, node_y + 1, node_x + hp + 1, node_y + 2), fill=(0, 255, 0)
+            (node_x + 1, node_y + 1, node_x + hp + 1, node_y + 1), fill=(0, 255, 0)
         )

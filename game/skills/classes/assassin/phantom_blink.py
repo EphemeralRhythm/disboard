@@ -8,6 +8,7 @@ class PhantomBlink(EntityTargetSkill):
         self.active_time = 1
         self.casting_time = 1
 
+        self.use_range = 18
         self.range = 15 * 16
 
         self.REMOVES_STEALTH = False
@@ -20,9 +21,6 @@ class PhantomBlink(EntityTargetSkill):
 
         rows = len(grid)
         cols = len(grid[0])
-
-        x = target.x
-        y = target.y
 
         nx = target.x - target.dir_x * 16
         ny = target.y + target.dir_y * 16

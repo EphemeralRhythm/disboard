@@ -69,10 +69,8 @@ def draw_map(x: int, y: int, map_cell, zoomed=False, unit=None, gui=True):
             # )
 
             entity.draw(map_image, draw)
-
-    if gui:
-        for entity in map_entities:
-            entity.draw_gui(map_image, draw)
+            if gui:
+                entity.draw_gui(map_image, draw)
 
     map_image = map_image.crop(
         (
