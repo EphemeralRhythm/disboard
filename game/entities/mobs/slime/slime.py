@@ -14,12 +14,12 @@ class Slime(Mob):
 
         self.init_from_spawn(x, y, grid_r, grid_c)
 
-    def draw(self, map_image):
+    def draw(self, map_image, image_draw):
         unit_image = Image.open(
             "./assets/images/entities/player/kannagi/female/purple/idle.png"
         )
 
-        map_image.paste(unit_image, (self.x - 12, self.y - 16), unit_image)
+        map_image.paste(unit_image, (self.x - 8, self.y - 8), unit_image)
 
     def __repr__(self):
         return "cleric"

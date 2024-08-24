@@ -10,6 +10,8 @@ class PhantomBlink(EntityTargetSkill):
 
         self.range = 15 * 16
 
+        self.REMOVES_STEALTH = False
+
     def effect(self):
         target = self.target
         assert target, "attempted Phantom Blink without a target"

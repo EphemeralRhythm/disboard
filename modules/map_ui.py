@@ -60,7 +60,15 @@ def draw_map(x: int, y: int, map_cell, zoomed=False, unit=None):
 
     for entity in map_entities:
         if not entity.is_stealthed() or entity == unit:
-            entity.draw(map_image)
+            player = entity
+            node_x = player.x - player.x % 16
+            node_y = player.y - player.y % 16
+
+            draw.rounded_rectangle(
+                (node_x, node_y, node_x + 16, node_y + 16), fill="red"
+            )
+
+            entity.draw(map_image, draw)
 
     for entity in map_entities:
         pass

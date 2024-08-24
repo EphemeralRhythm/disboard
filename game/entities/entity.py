@@ -274,5 +274,5 @@ class Entity:
     def get_stunned(self, time):
         self.stateManager.changeState(StunnedState(self, time))
 
-    def draw(self, map_image):
+    def draw(self, map_image, image_draw):
         raise NotImplementedError()

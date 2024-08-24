@@ -22,6 +22,7 @@ class Player(Entity):
         super().__init__("player", world)
         self.init_from_db_post(db_post)
 
+        self.username = db_post["username"]
         self.player_class = db_post["class"]
         self.id = db_post["_id"]
         self.gender = db_post["gender"]
@@ -44,7 +45,7 @@ class Player(Entity):
     def __repr__(self):
         return (self.color + " " + self.player_class).title()
 
-    def draw(self, map_image):
+    def draw(self, map_image, image_draw):
         flipped = False
         frame = "idle"
 
@@ -75,7 +76,7 @@ class Player(Entity):
             alpha = ImageEnhance.Brightness(alpha).enhance(0.5)
             unit_image.putalpha(alpha)
 
-        map_image.paste(unit_image, (self.x - 12, self.y - 16), unit_image)
+        map_image.paste(unit_image, (self.x - 8, self.y - 8), unit_image)
 
     def is_ally(self, other_player):
         return False
