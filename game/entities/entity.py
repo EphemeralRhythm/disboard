@@ -36,15 +36,16 @@ class Entity:
         self.dir_x = 0
         self.dir_y = 0
 
-        self.MAX_HP = 0
-        self.MAX_MP = 0
+        self.MAX_HP = 100
+        self.MAX_MP = 100
         self.LEVEL = 0
 
         self.HP = 100
         self.ATK = 20
-        self.AGI = 10
+        self.DODGE = 10
+        self.ACC = 10
         self.DEF = 10
-        self.CRIT = 40
+        self.CRIT = 30
 
         self.attackRange = 16
 
@@ -140,11 +141,11 @@ class Entity:
 
         return _def
 
-    def get_AGI(self) -> int:
-        agi = self.AGI
+    def get_DODGE(self) -> int:
+        agi = self.DODGE
 
         for effect in self.status_effects:
-            agi += effect.get_AGI_modifier()
+            agi += effect.get_DODGE_modifier()
 
         return agi
 
@@ -162,14 +163,14 @@ class Entity:
     def roll_crit(self) -> bool:
         # 10% chance of crit rates
         crit_rate = self.get_crit_rate()
-        return random.randint(0, 100) >= 100 - crit_rate
+        return random.randint(0, 100) <= crit_rate
 
-    def roll_AGI(self) -> bool:
+    def roll_DODGE(self, enemy_acc) -> bool:
         """
         returns whether a player succeeds in a dodge
         """
 
-        return random.randint(0, 100) >= 100 - self.get_AGI()
+        return random.randint(0, 100) <= (self.get_DODGE() / enemy_acc) * 40
 
     def roll_DEF(self):
         return self.get_input_variance(self.get_DEF(), ATK_DEF_VARIANCE)
@@ -188,7 +189,7 @@ class Entity:
         if is_crit:
             damage = int(damage * 1.5)
 
-        did_dodge = entity.roll_AGI()
+        did_dodge = entity.roll_DODGE(self.ACC)
 
         if did_dodge and not is_crit:
             self.notify(
@@ -276,3 +277,24 @@ class Entity:
 
     def draw(self, map_image, image_draw):
         raise NotImplementedError()
+
+    def draw_gui(self, map_image, image_draw):
+        self.draw_hp_bar(map_image, image_draw)
+
+    def draw_hp_bar(self, map_image, image_draw):
+        node_x = self.x - self.x % 16
+        node_y = self.y - self.y % 16 + 18
+
+        # draw outline
+        image_draw.rectangle((node_x, node_y, node_x + 16, node_y + 3), fill="black")
+
+        # draw red
+        image_draw.rectangle(
+            (node_x + 1, node_y + 1, node_x + 15, node_y + 2), fill=(255, 0, 0)
+        )
+
+        hp = int(self.HP / self.MAX_HP * 14)
+        # draw green
+        image_draw.rectangle(
+            (node_x + 1, node_y + 1, node_x + hp + 1, node_y + 2), fill=(0, 255, 0)
+        )

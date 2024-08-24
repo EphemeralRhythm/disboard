@@ -10,6 +10,8 @@ class Slime(Mob):
         self.LEVEL = 30
 
         self.ATK = 12
+        self.ACC = 10
+        self.DODGE = 10
         self.size = (32, 32)
 
         self.init_from_spawn(x, y, grid_r, grid_c)

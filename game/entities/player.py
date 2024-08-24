@@ -78,6 +78,9 @@ class Player(Entity):
 
         map_image.paste(unit_image, (self.x - 8, self.y - 8), unit_image)
 
+    def draw_gui(self, map_image, image_draw):
+        super().draw_gui(map_image, image_draw)
+
     def is_ally(self, other_player):
         return False
 

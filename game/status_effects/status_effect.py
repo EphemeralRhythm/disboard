@@ -19,7 +19,7 @@ class StatusEffect:
     def effect(self):
         raise NotImplementedError()
 
-    def get_AGI_modifier(self):
+    def get_DODGE_modifier(self):
         return 0
 
     def get_DEF_modifier(self):

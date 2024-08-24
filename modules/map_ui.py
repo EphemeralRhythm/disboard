@@ -13,7 +13,7 @@ def in_image_bounds(map_object, camera_x, camera_y):
     )
 
 
-def draw_map(x: int, y: int, map_cell, zoomed=False, unit=None):
+def draw_map(x: int, y: int, map_cell, zoomed=False, unit=None, gui=True):
     if zoomed:
         viewport_x = ZOOMED_VIEWPORT_X
         viewport_y = ZOOMED_VIEWPORT_Y
@@ -64,15 +64,15 @@ def draw_map(x: int, y: int, map_cell, zoomed=False, unit=None):
             node_x = player.x - player.x % 16
             node_y = player.y - player.y % 16
 
-            draw.rounded_rectangle(
-                (node_x, node_y, node_x + 16, node_y + 16), fill="red"
-            )
+            # draw.rounded_rectangle(
+            #    (node_x, node_y, node_x + 16, node_y + 16), fill="red"
+            # )
 
             entity.draw(map_image, draw)
 
-    for entity in map_entities:
-        pass
-        # entity.draw_effects()
+    if gui:
+        for entity in map_entities:
+            entity.draw_gui(map_image, draw)
 
     map_image = map_image.crop(
         (

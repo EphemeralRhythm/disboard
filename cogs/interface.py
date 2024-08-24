@@ -10,12 +10,14 @@ class Interface(commands.Cog):
         self.client = client
 
     @commands.command(name="map")
-    async def _map(self, ctx, *, args=None):
+    async def _map(self, ctx, *, args=""):
 
         if not (unit := await check_player_alive(self.client, ctx)):
             return
 
-        image = draw_map(unit.x, unit.y, unit.cell, bool(args), unit)
+        image = draw_map(
+            unit.x, unit.y, unit.cell, ("o" in args), unit, "g" not in args
+        )
 
         path = f"./assets/images/player_maps/{ctx.author.id}.png"
         image.save(path)
