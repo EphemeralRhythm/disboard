@@ -85,16 +85,15 @@ async def send_target_select(client, targets, player, ctx, title):
     await ctx.send(embed=embed)
 
     def check(m: discord.Message):
-        return (
-            m.author.id == ctx.author.id
-            and m.channel == ctx.channel
-            and m.content.isdigit()
-            and 0 < int(m.content) <= len(targets)
-        )
+        return m.author.id == ctx.author.id and m.channel == ctx.channel
 
     msg = None
+
     try:
         msg = await client.wait_for("message", timeout=20, check=check)
+
+        if not (msg.content.isdigit() and 0 < int(msg.content) <= len(targets)):
+            return None
 
     except asyncio.TimeoutError:
         return None
@@ -117,18 +116,24 @@ async def get_skills_embed(player, ctx, client):
     await ctx.send(embed=embed)
 
     def check(m: discord.Message):
-        return (
-            m.author.id == ctx.author.id
-            and m.channel == ctx.channel
-            and m.content.isdigit()
-            and 0 < int(m.content) <= len(player.skills)
-            and player.skills[int(m.content) - 1].is_ready()
-            and not player.stateManager.currentState.is_movement_locked
-        )
+        return m.author.id == ctx.author.id and m.channel == ctx.channel
 
     msg = None
+
     try:
         msg = await client.wait_for("message", timeout=20, check=check)
+
+        if not (msg.content.isdigit() and 0 < int(msg.content) <= len(player.skills)):
+            return None
+
+        if not player.skills[int(msg.content) - 1].is_ready():
+            await ctx.send("This skill is not ready yet.")
+            return None
+
+        state = player.stateManager.currentState
+        if state.is_movement_locked:
+            await ctx.send(f"Unable to use skill while {state.action_name}")
+            return None
 
     except asyncio.TimeoutError:
         return None

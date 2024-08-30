@@ -28,10 +28,15 @@ class Player(Entity):
         self.size = (32, 32)
         self.channel_id = db_post.get("channel_id")
 
-        update_skills(self)
-
         self.attackRange = 16
-        self.ATK = 20
+
+        self.HP = 11360
+        self.ATK = 570
+        self.DEF = 0
+
+        self.MAX_HP = self.HP
+
+        update_skills(self)
 
     def __repr__(self):
         return (self.color + " " + self.player_class).title()
@@ -119,3 +124,9 @@ class Player(Entity):
                 }
             },
         )
+
+    def get_stunned(self, time):
+        super().get_stunned(time / 2)
+
+    def get_disoriented(self, time):
+        super().get_disoriented(time / 2)

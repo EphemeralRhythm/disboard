@@ -13,9 +13,15 @@ class DisorientedState(State):
         self.is_movement_locked = True
         self.time_remaining = timeout
 
+        self.IS_STATUS_EFFECT = True
         self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
     def OnUpdate(self):
+        self.time_remaining -= 1
+
+        if self.time_remaining == 0:
+            self.Exit()
+
         grid = self.entity.cell.terrain
         r, c = self.entity.y // 16, self.entity.x // 16
 

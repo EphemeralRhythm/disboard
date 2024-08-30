@@ -33,9 +33,11 @@ class Entity:
         self.y = 0
         self.grid_r = 0
         self.grid_c = 0
-        self.HP = 0
         self.dir_x = 0
         self.dir_y = 0
+
+        self.HP = 0
+        self.MP = 0
 
         self.MAX_HP = 100
         self.MAX_MP = 100
@@ -47,8 +49,10 @@ class Entity:
         self.ACC = 10
         self.DEF = 10
         self.CRIT = 30
-
         self.attackRange = 16
+
+        self.combat_cooldown = 20
+        self.combat_timeout = 0
 
         self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
@@ -101,6 +105,9 @@ class Entity:
 
         self.is_moving = False
         self.is_attacking = False
+
+        if self.combat_timeout != 0:
+            self.combat_timeout -= 1
 
         self.stateManager.update()
 
@@ -224,6 +231,7 @@ class Entity:
         print(f"{entity} is taking damage from {self}. HP is now {entity.HP}")
 
     def take_damage(self, damage: int, entity=None):
+        self.combat_timeout = self.combat_cooldown
         self.HP -= damage
 
         if self.HP <= 0:
@@ -253,6 +261,13 @@ class Entity:
 
         del self
 
+    def lose_MP(self, amount):
+        assert self.MP >= amount, "tried to subtract more mana than the entity has"
+        self.MP -= amount
+
+    def gain_MP(self, amount):
+        self.MP = min(self.MAX_MP, self.MP + amount)
+
     def notify(self, description, color=COLOR_YELLOW):
         return
 
@@ -260,13 +275,21 @@ class Entity:
         pass
 
     def add_status_effect(self, e):
-        self.status_effects.append(e)
+        for effect in self.status_effects:
+            if e.name == effect.name:
+                effect.renew(e.remaining_time)
+                break
+        else:
+            self.status_effects.append(e)
 
     def is_silenced(self):
         return any([e.silenced for e in self.status_effects])
 
     def is_stealthed(self):
         return any([e.name == "stealth" for e in self.status_effects])
+
+    def is_in_combat(self):
+        return self.combat_timeout != 0
 
     def remove_stealth(self):
         self.status_effects = list(

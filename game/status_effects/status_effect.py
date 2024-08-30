@@ -17,15 +17,15 @@ class StatusEffect:
         return self.remaining_time > 0
 
     def effect(self):
-        raise NotImplementedError()
+        pass
 
-    def get_DODGE_modifier(self):
+    def get_DODGE_modifier(self) -> int:
         return 0
 
-    def get_DEF_modifier(self):
+    def get_DEF_modifier(self) -> int:
         return 0
 
-    def get_ATK_modifier(self):
+    def get_ATK_modifier(self) -> int:
         return 0
 
     def get_CRIT_modifier(self):
@@ -33,3 +33,6 @@ class StatusEffect:
 
     def OnTakeDamage(self):
         pass
+
+    def renew(self, time):
+        self.remaining_time = time

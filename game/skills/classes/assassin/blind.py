@@ -8,7 +8,7 @@ class Blind(EntityTargetSkill):
         self.active_time = 1
         self.casting_time = 1
 
-        self.blind_time = 3
+        self.blind_time = 6
         self.range = 16
 
     def effect(self):
@@ -16,5 +16,9 @@ class Blind(EntityTargetSkill):
 
         self.entity.notify(
             f"Used Blind on {self.target}.\nThe target is now blind for {self.blind_time} ticks."
+        )
+
+        self.target.notify(
+            f"{self.entity} used the skill Blind disorienting you for {self.blind_time} ticks."
         )
         self.target.get_disoriented(self.blind_time)

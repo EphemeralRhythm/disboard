@@ -12,6 +12,8 @@ class StunnedState(State):
         self.is_movement_locked = True
         self.time_remaining = timeout
 
+        self.IS_STATUS_EFFECT = True
+
     def OnUpdate(self):
         print(f"{self.entity} is stunned. {self.time_remaining} remaining.")
         self.time_remaining -= 1

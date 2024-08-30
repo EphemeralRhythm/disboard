@@ -23,6 +23,9 @@ class AttackState(State):
         if distance(target, entity) > entity.attackRange:
             if not follow(entity, target):
                 self.Exit()
+                return
+
+        if distance(target, entity) > entity.attackRange:
             return
 
         entity.is_attacking = True

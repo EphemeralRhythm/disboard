@@ -10,7 +10,6 @@ class Backend:
 
     def update_game(self):
         self.world.init_players()
-        self.world.init_entities()
 
         while True:
             if time.time() - self.cur_time >= GAME_TICK:

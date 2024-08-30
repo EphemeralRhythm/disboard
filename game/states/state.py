@@ -4,6 +4,7 @@ class State:
         self.name = "state"
         self.action_name = ""
 
+        self.IS_STATUS_EFFECT = False
         self.is_movement_locked = False
 
     def OnEnter(self):

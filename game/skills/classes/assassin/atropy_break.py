@@ -9,7 +9,7 @@ class AtrophyBreak(EntityTargetSkill):
         self.casting_time = 1
         self.damage = self.entity.get_attack_damage()
 
-        self.stun_time = 3
+        self.stun_time = 6
         self.range = 5 * 16
 
     def effect(self):
@@ -21,6 +21,7 @@ class AtrophyBreak(EntityTargetSkill):
 
         self.target.take_damage(self.damage, self.entity)
         self.target.get_stunned(self.stun_time)
+
         self.target.notify(
             f"{self.entity} attacked you using Atrophy Break dealing {self.damage} and stunning you for {self.stun_time} ticks."
             + f"\nYour HP is now {self.target.HP}"

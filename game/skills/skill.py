@@ -24,7 +24,11 @@ class Skill:
         self.y = y
         self.target = target
 
+        self.mana_required = 0
+        self.mana_gained = 0
+
         self.IS_PASSIVE = False
+        self.ALLOW_IN_COMBAT = True
         self.GENERATES_THREAT = True
         self.REMOVES_STEALTH = True
         self.ALLOW_WHILE_STUNNED = False
@@ -61,16 +65,21 @@ class Skill:
 
     def use(self):
         assert self.is_ready(), "attempted to use when skill was not ready"
+        assert (
+            self.entity.MP >= self.mana_required
+        ), "Attempted to use skill with insufficient mana"
 
         self.casting = True
         self.casting_timeout = self.casting_time
+
+        self.entity.lose_MP(self.mana_required)
         print(f"{self.entity} is casting {self.name}.")
-        self.entity.notify(f"Using the skill {self.name}.")
 
     def activate(self):
         self.casting = False
         self.active = True
         self.active_timeout = self.active_time
+        self.entity.gain_MP(self.mana_gained)
 
     def effect(self):
         raise NotImplementedError()

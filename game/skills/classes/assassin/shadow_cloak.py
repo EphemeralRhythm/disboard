@@ -8,6 +8,7 @@ class ShadowCloak(InplaceSkill):
 
         self.active_time = 1
         self.casting_time = 1
+        self.ALLOW_IN_COMBAT = False
 
     def effect(self):
         e = StealthStatusEffect(self.entity, 600)

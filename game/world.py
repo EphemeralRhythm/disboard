@@ -83,6 +83,8 @@ class World:
         post["class"] = cl
         post["color"] = color
 
+        post["level"] = 1
+
         self.add_player(post)
         db.players_collection.insert_one(post)
         return True
