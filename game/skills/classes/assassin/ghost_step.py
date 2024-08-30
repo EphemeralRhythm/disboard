@@ -12,7 +12,7 @@ class GhostStep(LocationTargetSkill):
 
     def effect(self):
         if self.active_timeout == 3:
-            e = StealthStatusEffect(self.entity, 2)
+            e = StealthStatusEffect(self.entity, 3)
             self.entity.add_status_effect(e)
             self.entity.notify(
                 "Activating the skill **Ghost Step**. You are now invisible."

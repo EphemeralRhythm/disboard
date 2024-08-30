@@ -126,17 +126,22 @@ async def get_skills_embed(player, ctx, client):
         if not (msg.content.isdigit() and 0 < int(msg.content) <= len(player.skills)):
             return None
 
-        if not player.skills[int(msg.content) - 1].is_ready():
+        skill = player.skills[int(msg.content) - 1]
+
+        if not skill.is_ready():
             await ctx.send("This skill is not ready yet.")
             return None
 
         state = player.stateManager.currentState
         if state.is_movement_locked:
-            await ctx.send(f"Unable to use skill while {state.action_name}")
+            await ctx.send(f"Unable to use this skill while {state.action_name}.")
+            return None
+
+        if player.is_in_combat() and not skill.ALLOW_IN_COMBAT:
+            await ctx.send("Unable to use this skill while in combat.")
             return None
 
     except asyncio.TimeoutError:
         return None
 
-    index = int(msg.content)
-    return player.skills[index - 1]
+    return skill
