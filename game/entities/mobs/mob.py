@@ -22,9 +22,11 @@ class Mob(Entity):
         players = self.cell.players
 
         for player in players:
+            if player.is_stealthed():
+                continue
+
             dist = distance(self, player) // 16
 
-            print("player: ", player, dist)
             if dist <= self.aggro_radius:
                 self.enemies_within_radius.append((player, dist))
 
@@ -63,11 +65,15 @@ class Mob(Entity):
             level_difference = self.LEVEL - enemy.LEVEL
             aggro_bonus = 100
 
+            print(enemy, int(distance_factor * 20), int(level_difference))
             # 20 % of this is distance
             aggro_bonus += int(distance_factor * 20)
 
             # bonus for level difference
             aggro_bonus += int(level_difference)
+
+            # can't be negative
+            aggro_bonus = max(aggro_bonus, 0)
 
             if enemy == target:
                 aggro_bonus += 20
@@ -81,7 +87,7 @@ class Mob(Entity):
         self.aggro_table = mp
         self.damage_table.clear()
 
-        print(f"{self}, aggro: ", aggro_table)
+        print(f"{self}, aggro: ", self.aggro_table)
 
         if len(self.aggro_table) == 0:
             return
@@ -89,14 +95,18 @@ class Mob(Entity):
         mx = 0
         new_target = None
 
-        for e in aggro_table:
-            if aggro_table[e] > mx and not e.is_stealthed():
-                mx = aggro_table[e]
+        for e in self.aggro_table:
+            if self.aggro_table[e] > mx and not e.is_stealthed():
+                mx = self.aggro_table[e]
                 new_target = e
 
-        print("mx: ", mx, new_target)
+        is_movement_locked = self.stateManager.currentState.is_movement_locked
 
-        if new_target and mx > 1.2 * self.aggro_table.get(target, 0):
+        if (
+            not is_movement_locked
+            and new_target
+            and mx > 1.1 * self.aggro_table.get(target, 0)
+        ):
             self.stateManager.changeState(MobAttackState(self, new_target))
 
     def take_damage(self, damage: int, entity=None):

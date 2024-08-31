@@ -6,10 +6,10 @@ class Slime(Mob):
     def __init__(self, x, y, grid_r, grid_c, world):
         super().__init__("slime", world)
 
-        self.MAX_HP = 200
+        self.MAX_HP = 1000000
         self.LEVEL = 30
 
-        self.ATK = 12
+        self.ATK = 0
         self.ACC = 10
         self.DODGE = 10
         self.size = (32, 32)

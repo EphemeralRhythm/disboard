@@ -13,7 +13,6 @@ class MobAttackState(State):
         self.target = target
 
     def OnUpdate(self):
-        print(f"{self.entity} is attacking {self.target}")
         target = self.target
         entity = self.entity
 
@@ -27,6 +26,7 @@ class MobAttackState(State):
             return
 
         entity.is_attacking = True
+        print(f"{self.entity} is attacking {self.target}")
 
         if self.entity.auto_attack(target):
             self.Exit()

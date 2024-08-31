@@ -22,7 +22,7 @@ def follow(entity: Entity, target: Entity):
     entity.y = path[0][0] * 16
 
     entity.is_moving = True
-    print(f"{entity.name} is following {target.name}.")
+    print(f"{entity} is following {target}.")
 
     return True
 
@@ -48,6 +48,6 @@ class FollowState(State):
 
     def OnExit(self, canceled=False):
         if self.reached_target():
-            print(f"{self.entity.name} reached destination.")
+            print(f"{self.entity} reached destination.")
         else:
-            print(f"{self.entity.name} failed to reach destination.")
+            print(f"{self.entity} failed to reach destination.")

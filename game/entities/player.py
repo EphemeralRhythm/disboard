@@ -24,6 +24,7 @@ class Player(Entity):
         self.id = db_post["_id"]
         self.gender = db_post["gender"]
         self.color = db_post["color"]
+        self.LEVEL = db_post["level"]
 
         self.size = (32, 32)
         self.channel_id = db_post.get("channel_id")
@@ -32,7 +33,7 @@ class Player(Entity):
 
         self.HP = 11360
         self.ATK = 570
-        self.DEF = 0
+        self.DEF = 20000
 
         self.MAX_HP = self.HP
 
