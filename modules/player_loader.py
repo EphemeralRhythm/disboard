@@ -1,25 +1,22 @@
-from game.skills.classes.assassin.atropy_break import AtrophyBreak
-from game.skills.classes.assassin.ghost_step import GhostStep
-from game.skills.classes.assassin.shadow_cloak import ShadowCloak
-from game.skills.classes.assassin.phantom_blink import PhantomBlink
-from game.skills.classes.assassin.crimson_vial import CrimsonVial
-from game.skills.classes.assassin.blind import Blind
-from game.skills.classes.assassin.smoke_screen import SmokeScreen
-from game.skills.classes.assassin.death_sweep import DeathSweep
-from game.skills.classes.assassin.backstab import Backstab
-from game.skills.classes.assassin.assassinate import Assassinate
+import os
+import importlib
+
+SKILLS_PATH = "game.skills.classes"
 
 
 def update_skills(player):
-    match player.player_class:
-        case "assassin":
-            player.skills.append(GhostStep(player))
-            player.skills.append(ShadowCloak(player))
-            player.skills.append(PhantomBlink(player))
-            player.skills.append(CrimsonVial(player))
-            player.skills.append(AtrophyBreak(player))
-            player.skills.append(Blind(player))
-            player.skills.append(SmokeScreen(player))
-            player.skills.append(Assassinate(player))
-            player.skills.append(Backstab(player))
-            player.skills.append(DeathSweep(player))
+    class_folder_path = f"{SKILLS_PATH}.{player.player_class}"
+    folder_path = os.path.join(SKILLS_PATH.replace(".", "/"), player.player_class)
+
+    for file_name in os.listdir(folder_path):
+        if file_name.endswith(".py") and file_name != "__init__.py":
+            module_name = file_name[:-3]
+
+            module_path = f"{class_folder_path}.{module_name}"
+            module = importlib.import_module(module_path)
+
+            class_name = "".join(word.capitalize() for word in module_name.split("_"))
+
+            skill_class = getattr(module, class_name)
+
+            player.skills.append(skill_class(player))

@@ -18,8 +18,9 @@ class Controller(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(name="move")
+    @commands.command(name="move", aliases=["m"])
     async def move(self, ctx, *args):
+        """ """
         if not (player := await check_player_alive(self.client, ctx)):
             return
 
@@ -39,7 +40,7 @@ class Controller(commands.Cog):
 
         await ctx.send("Command updated!")
 
-    @commands.command(name="attack")
+    @commands.command(name="attack", aliases=["a"])
     async def attack(self, ctx, *args):
         if not (player := await check_player_alive(self.client, ctx)):
             return
@@ -72,7 +73,7 @@ class Controller(commands.Cog):
             self.client.world.add_command(command)
             await ctx.send(f"Command added to queue! Attacking {target}.")
 
-    @commands.command(name="skills")
+    @commands.command(name="skills", aliases=["s"])
     async def skills(self, ctx):
         if not (player := await check_player_alive(self.client, ctx)):
             return
