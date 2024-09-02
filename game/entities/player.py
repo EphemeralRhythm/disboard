@@ -33,7 +33,7 @@ class Player(Entity):
 
         self.HP = 11360
         self.ATK = 570
-        self.DEF = 20000
+        self.DEF = 200
 
         self.MAX_HP = self.HP
 

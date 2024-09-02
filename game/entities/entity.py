@@ -184,10 +184,6 @@ class Entity:
         return self.get_input_variance(self.get_DEF(), ATK_DEF_VARIANCE)
 
     def auto_attack(self, entity):
-        """
-        auto attack damage is calculated from modified ATK with a variance percentage
-        """
-
         self.remove_stealth()
 
         damage = self.get_input_variance(self.get_attack_damage(), AUTO_ATTACK_VARIANCE)
@@ -210,43 +206,78 @@ class Entity:
 
             return
 
-        damage_absorbed = int(entity.roll_DEF())
-        damage_dealt = max(damage - damage_absorbed, 0)
-
-        self.notify(
-            (
-                ("**CRITICAL HIT!**\n" if is_crit else "")
-                + f"Attacked {entity} **dealing {damage_dealt}** DAMAGE.\nEnemy HP is now **{entity.HP - damage_dealt}**."
-            ),
-            COLOR_GREEN,
+        self_prefix = f"## You attacked {entity}\n" + (
+            "**CRITICAL HIT!**\n" if is_crit else ""
         )
 
-        entity.notify(
-            ("**CRITICAL HIT**!\n" if is_crit else "")
-            + f"You got attacked by {self} **losing {damage_dealt}** HP.\nHP is now **{entity.HP - damage_dealt}**.",
-            COLOR_RED,
-        )
+        enemy_prefix = f"## You were attacked by {self}\n"
 
-        entity.take_damage(damage_dealt, self)
+        enemy = [(entity, damage, [], [])]
+        self.deal_damage(enemy, self_prefix, enemy_prefix)
+
         print(f"{entity} is taking damage from {self}. HP is now {entity.HP}")
 
-    def take_damage(self, damage: int, entity=None):
-        self.combat_timeout = self.combat_cooldown
-        self.HP -= damage
+    def calculate_damage_dealt(self, damage: int):
+        damage_absorbed = int(self.roll_DEF())
+        damage_dealt = max(damage - damage_absorbed, 0)
 
-        if self.HP <= 0:
-            self.die()
+        return damage_dealt
 
-            if entity:
-                entity.notify(f"Eliminated the target {self}", COLOR_CYAN)
-            return
+    def deal_damage(
+        self,
+        enemies: list,
+        self_prefix: str = "",
+        enemy_prefix: str = "",
+        absolute: bool = False,
+    ):
+        for enemy, damage, status_effects, crowd_control in enemies:
+            self_prefix += f"### {enemy.__repr__().title()}\n"
 
-        self.OnTakeDamage()
+            dmg = enemy.calculate_damage_dealt(damage) if not absolute else damage
+            enemy.HP -= dmg
+            self_prefix += f"- **Damage Dealt:** {dmg}\n"
+            enemy_prefix += f"- **Damage Received:** {dmg}\n"
+
+            self_prefix += f"- **HP Remaining:** {enemy.HP}\n"
+            enemy_prefix += f"- **HP Remaining:** {enemy.HP}\n"
+
+            if status_effects:
+                status_effects_str = "- **Status Effects:** "
+
+                for effect in status_effects:
+                    status_effects_str += effect.__repr__() + " "
+                    enemy.add_status_effect(effect)
+
+                self_prefix += status_effects_str + "\n"
+                enemy_prefix += status_effects_str + "\n"
+
+            if crowd_control:
+                crowd_control_str = f"- **Crowd Control Effects:** {crowd_control}\n"
+
+                self_prefix += crowd_control_str
+                enemy_prefix += crowd_control_str
+
+                enemy.stateManager.changeState(crowd_control)
+
+            enemy.notify(enemy_prefix, COLOR_RED)
+
+            if enemy.HP <= 0:
+                enemy.die()
+                self_prefix += "- **Target Eliminated**\n"
+
+            else:
+                enemy.on_take_damage()
+
+            self_prefix += "\n\n"
+
+        self.notify(self_prefix, COLOR_GREEN)
 
     def heal(self, heal_amount):
         self.HP = min(self.MAX_HP, self.HP + heal_amount)
 
-    def OnTakeDamage(self):
+    def on_take_damage(self):
+        self.combat_timeout = self.combat_cooldown
+
         for effect in self.status_effects:
             effect.OnTakeDamage()
 

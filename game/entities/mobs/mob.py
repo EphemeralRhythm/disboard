@@ -110,7 +110,9 @@ class Mob(Entity):
             self.stateManager.changeState(MobAttackState(self, new_target))
 
     def take_damage(self, damage: int, entity=None):
-        super().take_damage(damage, entity)
+        damage_dealt = super().take_damage(damage, entity)
 
         if entity:
             self.damage_table[entity.id] = damage
+
+        return damage_dealt
