@@ -34,3 +34,5 @@ classes_emoji = {
     "druid": "<:druid:1275790932339327101>",
     "sorcerer": "<:sorcerer:1275790298592841728>",
 }
+
+icons_emoji = {"attack": "<a:attack:1280127680838107206>"}

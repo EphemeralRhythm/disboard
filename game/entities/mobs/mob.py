@@ -82,7 +82,7 @@ class Mob(Entity):
 
             aggro_increase = aggro_bonus * damage / 100
 
-            mp[enemy] = aggro_table[enemy] + aggro_increase
+            mp[enemy] = int(aggro_table[enemy] + aggro_increase)
 
         self.aggro_table = mp
         self.damage_table.clear()
@@ -109,10 +109,8 @@ class Mob(Entity):
         ):
             self.stateManager.changeState(MobAttackState(self, new_target))
 
-    def take_damage(self, damage: int, entity=None):
-        damage_dealt = super().take_damage(damage, entity)
-
-        if entity:
-            self.damage_table[entity.id] = damage
-
-        return damage_dealt
+    def gain_aggro(self, aggro: int, entity: Entity):
+        if entity.id in self.damage_table:
+            self.damage_table[entity.id] += aggro
+        else:
+            self.damage_table[entity.id] = aggro

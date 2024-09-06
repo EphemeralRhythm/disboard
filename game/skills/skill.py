@@ -1,8 +1,25 @@
 from game.command import Command
+from game.combat.attack import Attack
+
+from typing import TYPE_CHECKING
+
+from utils.constants import COLOR_BLUE
+
+if TYPE_CHECKING:
+    from game.entities.entity import Entity
 
 
 class Skill:
-    def __init__(self, name, cooldown, entity, x: int = 0, y: int = 0, target=None):
+    def __init__(
+        self,
+        name,
+        cooldown,
+        entity: "Entity",
+        x: int = 0,
+        y: int = 0,
+        target=None,
+        level: int = 1,
+    ):
         self.name = name
         self.cooldown = cooldown
         self.cooldown_timeout = 0
@@ -27,12 +44,68 @@ class Skill:
         self.mana_required = 0
         self.mana_gained = 0
 
+        self.damage_factor = 1
+        self.effect_time = 1
+
+        self.crit_rate = 10
+        self.crit_multiplier = 1.3
+
+        self.aggro_factor = 1
+
+        self.status_effects = []
+        self.crowd_control_state = None
+
         self.IS_PASSIVE = False
         self.ALLOW_IN_COMBAT = True
         self.GENERATES_THREAT = True
         self.REMOVES_STEALTH = True
         self.ALLOW_WHILE_STUNNED = False
         self.REQUIRES_TARGET = False
+        self.IS_INTERRUPT = False
+        self.IS_DODGEABLE = False
+        self.IS_CRITABLE = True
+
+        self.prefix = f"## {self.name}\n"
+        self.enemy_prefix = (
+            self.prefix
+            + f"### {self.entity.get_name()} attacked you with the skill **{self.name}**\n"
+        )
+
+        self.level = level
+        self.init_skill_level()
+
+    def init_skill_level(self):
+        pass
+
+    def init_primary_attack(self) -> Attack:
+        damage = self.damage_factor * self.entity.get_attack_damage()
+        acc = self.entity.get_ACC()
+
+        attack = Attack(damage, acc)
+        attack.is_interrupt = self.IS_INTERRUPT
+        attack.is_dodgeable = self.IS_DODGEABLE
+        attack.is_critable = self.IS_CRITABLE
+
+        attack.crit_rate = self.crit_rate
+        attack.crit_multiplier = self.crit_multiplier
+
+        attack.aggro_factor = self.entity.get_aggro_factor() * self.aggro_factor
+
+        attack.enemy_str = self.enemy_prefix
+
+        attack.status_effects = self.status_effects
+        attack.crowd_control_state = self.crowd_control_state
+
+        return attack
+
+    def single_target_attack(self):
+        if not self.target:
+            self.entity.idle()
+            return
+
+        attack = self.init_primary_attack()
+        notification = self.prefix + self.entity.attack(self.target, attack)
+        self.entity.notify(notification, COLOR_BLUE)
 
     def cast(self):
         assert self.casting, "Attempted to update before casting started"

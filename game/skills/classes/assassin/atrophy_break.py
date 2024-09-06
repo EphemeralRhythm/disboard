@@ -1,4 +1,5 @@
 from game.skills.types.entity_target_skill import EntityTargetSkill
+from game.states.crowd_control_states.disoriented_state import DisorientedState
 
 
 class AtrophyBreak(EntityTargetSkill):
@@ -7,22 +8,23 @@ class AtrophyBreak(EntityTargetSkill):
 
         self.active_time = 1
         self.casting_time = 1
-        self.damage = self.entity.get_attack_damage()
+        self.damage_factor = 1
 
-        self.stun_time = 6
+        self.effect_time = 8
         self.range = 5 * 16
 
     def effect(self):
-        assert self.target, f"Skill {self} has no target"
+        if not self.target:
+            self.entity.idle()
+            return
 
-        self.entity.notify(
-            f"Attacked {self.target} with Atrophy Break {self.damage} damage and stunning the enemy for {self.stun_time} ticks."
+        self_prefix = "## Atrophy Break\n\n"
+
+        damage = self.damage_factor * self.entity.get_attack_damage()
+        enemy = (
+            self.target,
+            damage,
+            [],
+            DisorientedState(self.target, self.effect_time),
         )
-
-        self.target.take_damage(self.damage, self.entity)
-        self.target.get_stunned(self.stun_time)
-
-        self.target.notify(
-            f"{self.entity} attacked you using Atrophy Break dealing {self.damage} and stunning you for {self.stun_time} ticks."
-            + f"\nYour HP is now {self.target.HP}"
-        )
+        self.entity.deal_damage([enemy], self_prefix)

@@ -49,5 +49,8 @@ class DisorientedState(State):
         if self.time_remaining == 0:
             self.Exit()
 
+    def OnTakeDamage(self):
+        self.Exit()
+
     def OnExit(self, canceled=False):
         self.entity.notify("You are no longer disoriented.", COLOR_YELLOW)

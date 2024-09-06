@@ -7,15 +7,17 @@ class Backstab(EntityTargetSkill):
 
         self.active_time = 1
         self.casting_time = 1
-        self.damage = 2 * self.entity.get_attack_damage()
+        self.damage_factor = 2
         self.range = 16
 
     def effect(self):
-        assert self.target, f"Skill {self} has no target"
+        if not self.target:
+            self.entity.idle()
+            return
 
-        self.target.take_damage(self.damage, self.entity)
+        self_prefix = "## Backstab\n\n"
 
-        self.entity.notify(
-            f"Attacked {self.target} with the skill Backstab dealing {self.damage} damage."
-            + f"\nEnemy HP is now {self.target.HP}"
-        )
+        damage = self.damage_factor * self.entity.get_attack_damage()
+        enemy = (self.target, damage, [], None)
+        self.entity.deal_damage([enemy], self_prefix)
+        self.target.interrupt()

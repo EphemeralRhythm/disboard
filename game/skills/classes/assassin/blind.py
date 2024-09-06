@@ -12,13 +12,13 @@ class Blind(EntityTargetSkill):
         self.range = 16
 
     def effect(self):
-        assert self.target, f"Skill {self} has no target"
+        if not self.target:
+            self.entity.idle()
+            return
 
-        self.entity.notify(
-            f"Used Blind on {self.target}.\nThe target is now blind for {self.blind_time} ticks."
-        )
+        self_prefix = "## Blind\n\n"
 
-        self.target.notify(
-            f"{self.entity} used the skill Blind disorienting you for {self.blind_time} ticks."
-        )
-        self.target.get_disoriented(self.blind_time)
+        damage = self.damage_factor * self.entity.get_attack_damage()
+        enemy = (self.target, damage, [], None)
+        self.entity.deal_damage([enemy], self_prefix)
+        self.target.interrupt()

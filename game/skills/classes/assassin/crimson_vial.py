@@ -12,5 +12,5 @@ class CrimsonVial(InplaceSkill):
         amount = 0.2 * self.entity.MAX_HP
         self.entity.heal(amount)
         self.entity.notify(
-            f"Used **Crimson Vial** to heal {amount} HP.\nYour HP is now {self.entity.HP}."
+            f"## Crimson Vial\nUsed **Crimson Vial** to heal {amount} HP.\nYour HP is now {self.entity.HP}."
         )

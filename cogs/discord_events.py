@@ -17,6 +17,7 @@ class DiscordEventHandler(commands.Cog):
                 continue
 
             channel = await self.client.fetch_channel(e.channel_id)
+
             embed = discord.Embed(description=e.description, color=e.color)
 
             await channel.send(content=f"<@{e.author_id}>", embed=embed)

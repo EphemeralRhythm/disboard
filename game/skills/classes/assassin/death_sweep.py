@@ -11,20 +11,17 @@ class DeathSweep(InplaceSkill):
         self.casting_time = 1
         self.impact_range = 3
 
-        self.damage = self.entity.get_attack_damage()
+        self.damage_factor = 1
 
     def effect(self):
+        damage = self.damage_factor * self.entity.get_attack_damage()
+
         enemies = self.entity.cell.get_targetable_entities(self.entity)
+        targets = []
 
-        targets = "Affected Targets:\n"
-
+        self_prefix = "## Death Sweep\n\n"
         for enemy in enemies:
             if distance(self.entity, enemy) <= self.impact_range * 16:
-                targets += f"- {enemy}: {self.damage}\n"
+                targets.append((enemy, damage, [], None))
 
-                enemy.take_damage(self.damage, self.entity)
-                enemy.notify(
-                    f"{self.entity} attacked you using the skill Death Sweep dealing {self.damage} DAMAGE.\nYour HP is now {enemy.HP}"
-                )
-
-        self.entity.notify("Using the skill **Death Sweep**.\n" + targets)
+        self.entity.deal_damage(targets, self_prefix)

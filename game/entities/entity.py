@@ -1,9 +1,15 @@
 import random
+from typing import List, TYPE_CHECKING
+
 from game.states.entityStates.idleState import IdleState
 from game.states.crowd_control_states.stunned_state import StunnedState
 from game.states.crowd_control_states.disoriented_state import DisorientedState
 from game.states.state import State
 from game.states.stateManager import StateManager
+
+from game.utils import randomize, random_roll
+from game.combat.attack import Attack
+
 from utils.constants import (
     COLOR_CYAN,
     COLOR_GREEN,
@@ -12,6 +18,12 @@ from utils.constants import (
     AUTO_ATTACK_VARIANCE,
     ATK_DEF_VARIANCE,
 )
+
+from utils.game import icons_emoji
+
+if TYPE_CHECKING:
+    from game.skills.skill import Skill
+    from game.status_effects.status_effect import StatusEffect
 
 
 class Entity:
@@ -50,6 +62,7 @@ class Entity:
         self.DEF = 10
         self.CRIT = 30
         self.attackRange = 16
+        self.CRIT_MULTIPLIER = 1.5
 
         self.combat_cooldown = 20
         self.combat_timeout = 0
@@ -68,16 +81,20 @@ class Entity:
         self.channel_id = None
         self.dead = False
 
-        self.skills = []
-        self.status_effects = []
+        self.skills: List["Skill"] = []
+        self.status_effects: List["StatusEffect"] = []
         self.gear = []
 
+        self.aggro_factor = 1
         self.enemies_within_radius = []
         self.aggro_table = {}
         self.aggro_radius = 8
         self.AGGRO_THRESHOLD = 100
 
     def __repr__(self):
+        return f"{self.name}"
+
+    def get_name(self):
         return f"{self.name}"
 
     def init_from_db_post(self, post: dict):
@@ -120,6 +137,21 @@ class Entity:
                 effects.append(e)
         self.status_effects = effects
 
+    def idle(self):
+        self.stateManager.changeState(self.idleState)
+
+    def interrupt(self, entity=None):
+        if self.stateManager.currentState.name == "casting":
+            self.idle()
+            self.notify(
+                "Your casting was interrupted" + f" by {entity.get_name()}."
+                if entity
+                else "."
+            )
+            return True
+
+        return False
+
     def changeState(self, state: State):
         self.stateManager.changeState(state)
 
@@ -137,10 +169,6 @@ class Entity:
 
         return atk
 
-    def get_input_variance(self, inp: int, variance: int) -> int:
-        return int(random.randint(100 - variance, 100 + variance) * inp / 100)
-
-    # damage absorbtion
     def get_DEF(self) -> int:
         _def = self.DEF
 
@@ -157,9 +185,20 @@ class Entity:
 
         return agi
 
+    def get_ACC(self) -> int:
+        """
+        returns attack accuracy with all the modifiers
+        """
+        acc = self.ACC
+
+        for effect in self.status_effects:
+            acc += effect.get_ACC_modifier()
+
+        return acc
+
     def get_crit_rate(self) -> int:
         """
-        returns a number between 0 and 100
+        returns crit rate (percentage) with all modifiers added
         """
         rate = self.CRIT
 
@@ -168,8 +207,15 @@ class Entity:
 
         return rate
 
+    def get_aggro_factor(self):
+        aggro = self.aggro_factor
+
+        for effect in self.status_effects:
+            aggro *= effect.get_aggro_modifier()
+
+        return aggro
+
     def roll_crit(self) -> bool:
-        # 10% chance of crit rates
         crit_rate = self.get_crit_rate()
         return random.randint(0, 100) <= crit_rate
 
@@ -178,44 +224,29 @@ class Entity:
         returns whether a player succeeds in a dodge
         """
 
-        return random.randint(0, 100) <= (self.get_DODGE() / enemy_acc) * 40
+        return random_roll((self.get_DODGE() / enemy_acc) * 40)
 
     def roll_DEF(self):
-        return self.get_input_variance(self.get_DEF(), ATK_DEF_VARIANCE)
+        return randomize(self.get_DEF(), ATK_DEF_VARIANCE)
 
-    def auto_attack(self, entity):
+    def auto_attack(self, enemy: "Entity"):
         self.remove_stealth()
 
-        damage = self.get_input_variance(self.get_attack_damage(), AUTO_ATTACK_VARIANCE)
-
-        is_crit = self.roll_crit()
-
-        if is_crit:
-            damage = int(damage * 1.5)
-
-        did_dodge = entity.roll_DODGE(self.ACC)
-
-        if did_dodge and not is_crit:
-            self.notify(
-                f"Attacking {entity}.\n**{entity} dodges** the attack taking no damage.",
-                COLOR_YELLOW,
-            )
-            entity.notify(
-                f"You were attacked by {self}.\n**You dodged** the attack taking no damage."
-            )
-
-            return
-
-        self_prefix = f"## You attacked {entity}\n" + (
-            "**CRITICAL HIT!**\n" if is_crit else ""
+        self_str = f"### {icons_emoji['attack']} Attacking {enemy.get_name()}\n"
+        enemy_str = (
+            f"### {icons_emoji['attack']} You were attacked by {self.get_name()}\n"
         )
 
-        enemy_prefix = f"## You were attacked by {self}\n"
+        attack = Attack(self.get_attack_damage(), self.get_ACC())
+        attack.enemy_str = enemy_str
+        attack.attacker = self
 
-        enemy = [(entity, damage, [], [])]
-        self.deal_damage(enemy, self_prefix, enemy_prefix)
+        attack.crit_rate = self.get_crit_rate()
 
-        print(f"{entity} is taking damage from {self}. HP is now {entity.HP}")
+        self_str += self.attack(enemy, attack)
+        self.notify(self_str, COLOR_GREEN)
+
+        print(f"{enemy} is taking damage from {self}. HP is now {enemy.HP}")
 
     def calculate_damage_dealt(self, damage: int):
         damage_absorbed = int(self.roll_DEF())
@@ -223,54 +254,80 @@ class Entity:
 
         return damage_dealt
 
-    def deal_damage(
-        self,
-        enemies: list,
-        self_prefix: str = "",
-        enemy_prefix: str = "",
-        absolute: bool = False,
-    ):
-        for enemy, damage, status_effects, crowd_control in enemies:
-            self_prefix += f"### {enemy.__repr__().title()}\n"
+    def gain_aggro(self, aggro: int, entity: "Entity"):
+        pass
 
-            dmg = enemy.calculate_damage_dealt(damage) if not absolute else damage
-            enemy.HP -= dmg
-            self_prefix += f"- **Damage Dealt:** {dmg}\n"
-            enemy_prefix += f"- **Damage Received:** {dmg}\n"
+    def attack(self, enemy: "Entity", attack: Attack) -> str:
 
-            self_prefix += f"- **HP Remaining:** {enemy.HP}\n"
-            enemy_prefix += f"- **HP Remaining:** {enemy.HP}\n"
+        self_str = f"### ■ {enemy.get_name().title()}\n"
+        enemy_str = attack.enemy_str
 
-            if status_effects:
-                status_effects_str = "- **Status Effects:** "
+        is_crit = random_roll(attack.crit_rate) and attack.is_critable
 
-                for effect in status_effects:
-                    status_effects_str += effect.__repr__() + " "
-                    enemy.add_status_effect(effect)
+        did_dodge = attack.is_dodgeable and (not is_crit) and enemy.roll_DODGE(self.ACC)
 
-                self_prefix += status_effects_str + "\n"
-                enemy_prefix += status_effects_str + "\n"
+        if did_dodge:
+            self_str += "- **Dodged the attack**"
+            enemy_str += "**You dodged** the attack taking no damage."
+            enemy.notify(enemy_str, COLOR_YELLOW)
 
-            if crowd_control:
-                crowd_control_str = f"- **Crowd Control Effects:** {crowd_control}\n"
+            return self_str
 
-                self_prefix += crowd_control_str
-                enemy_prefix += crowd_control_str
+        damage = randomize(attack.damage, attack.variance)
+        damage = enemy.calculate_damage_dealt(damage)
 
-                enemy.stateManager.changeState(crowd_control)
+        if is_crit:
+            self_str += "- **Critical Hit!**\n"
+            enemy_str += "- **Critical Hit!**\n"
 
-            enemy.notify(enemy_prefix, COLOR_RED)
+            damage *= attack.crit_multiplier
 
-            if enemy.HP <= 0:
-                enemy.die()
-                self_prefix += "- **Target Eliminated**\n"
+        enemy.HP -= damage
+        self_str += f"- **Damage Dealt:** {damage}\n"
+        enemy_str += f"- **Damage Received:** {damage}\n"
 
-            else:
-                enemy.on_take_damage()
+        hp_str = f"- **HP Remaining:** {enemy.HP}/{enemy.MAX_HP}, ({int(enemy.HP / enemy.MAX_HP * 100)} %)\n"
 
-            self_prefix += "\n\n"
+        self_str += hp_str
+        enemy_str += hp_str
 
-        self.notify(self_prefix, COLOR_GREEN)
+        status_effects = attack.status_effects
+        crowd_control = attack.crowd_control_state
+
+        if attack.is_interrupt:
+            if enemy.interrupt(attack.attacker):
+                self_str += "- **Interrupted casting**\n"
+
+        enemy.gain_aggro(int(damage * attack.aggro_factor), self)
+
+        if status_effects:
+            status_effects_str = "- **Status Effects:** "
+
+            for effect in status_effects:
+                status_effects_str += effect.__repr__() + " "
+                enemy.add_status_effect(effect)
+
+            self_str += status_effects_str + "\n"
+            enemy_str += status_effects_str + "\n"
+
+        if crowd_control:
+            crowd_control_str = f"- **Crowd Control Effects:** {crowd_control}\n"
+
+            self_str += crowd_control_str
+            enemy_str += crowd_control_str
+
+            enemy.stateManager.changeState(crowd_control)
+
+        enemy.notify(enemy_str, COLOR_RED)
+
+        if enemy.HP <= 0:
+            enemy.die()
+            self_str += "- **Target Eliminated**\n"
+
+        else:
+            enemy.on_take_damage()
+
+        return self_str
 
     def heal(self, heal_amount):
         self.HP = min(self.MAX_HP, self.HP + heal_amount)

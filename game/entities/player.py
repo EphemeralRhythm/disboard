@@ -34,6 +34,7 @@ class Player(Entity):
         self.HP = 11360
         self.ATK = 570
         self.DEF = 200
+        self.CRIT = 60
 
         self.MAX_HP = self.HP
 
@@ -41,6 +42,9 @@ class Player(Entity):
 
     def __repr__(self):
         return (self.color + " " + self.player_class).title()
+
+    def get_name(self):
+        return f"<@{self.id}>"
 
     def draw(self, map_image, image_draw):
         flipped = False
@@ -81,10 +85,10 @@ class Player(Entity):
     def is_ally(self, other_player):
         return False
 
-    def move(self, x, y):
+    def change_to_move_state(self, x, y):
         self.stateManager.changeState(MoveState(self, x, y), True)
 
-    def attack(self, target: Entity):
+    def change_to_attack_state(self, target: Entity):
         self.stateManager.changeState(AttackState(self, target), True)
 
     def cast(self, skill):

@@ -1,5 +1,11 @@
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from game.entities.entity import Entity
+
+
 class StatusEffect:
-    def __init__(self, name, entity, remaining_time):
+    def __init__(self, name, entity: "Entity", remaining_time):
         self.name = name
         self.entity = entity
         self.remaining_time = remaining_time + 1
@@ -30,6 +36,12 @@ class StatusEffect:
 
     def get_CRIT_modifier(self):
         return 0
+
+    def get_ACC_modifier(self):
+        return 0
+
+    def get_aggro_modifier(self):
+        return 1
 
     def OnTakeDamage(self):
         pass

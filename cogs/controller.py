@@ -5,7 +5,7 @@ import discord
 from discord.ext import commands
 from game.command import Command
 from modules.combat import send_target_select, get_skills_embed
-from utils.constants import COLOR_RED
+from utils.constants import COLOR_CYAN, COLOR_RED
 from modules.game import (
     check_player,
     check_player_alive,
@@ -71,7 +71,11 @@ class Controller(commands.Cog):
         if target:
             command = Command(name="attack", author=player, target=target)
             self.client.world.add_command(command)
-            await ctx.send(f"Command added to queue! Attacking {target}.")
+            embed = discord.Embed(
+                description=f"Command added to queue! Attacking {target.get_name()}.",
+                color=COLOR_CYAN,
+            )
+            await ctx.send(embed=embed)
 
     @commands.command(name="skills", aliases=["s"])
     async def skills(self, ctx):

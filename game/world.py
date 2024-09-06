@@ -5,6 +5,7 @@ from game.entities.mobs.slime.slime import Slime
 import utils.database as db
 
 from game.cell import Cell
+
 from game.entities.player import Player
 from models.interface.discord_event import DiscordEvent
 
@@ -124,7 +125,7 @@ class World:
             x = command.x
             y = command.y
 
-            player.move(x, y)
+            player.change_to_move_state(x, y)
 
         elif command.name == "attack":
             t = command.target
@@ -139,7 +140,7 @@ class World:
                 # command failed
                 return
 
-            player.attack(target)
+            player.change_to_attack_state(target)
 
         elif command.name == "cast":
             skill = command.skill
