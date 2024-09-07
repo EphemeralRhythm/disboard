@@ -55,15 +55,19 @@ class Skill:
         self.status_effects = []
         self.crowd_control_state = None
 
-        self.IS_PASSIVE = False
-        self.ALLOW_IN_COMBAT = True
-        self.GENERATES_THREAT = True
-        self.REMOVES_STEALTH = True
         self.ALLOW_WHILE_STUNNED = False
-        self.REQUIRES_TARGET = False
+        self.ALLOW_WHILE_STEALTHED = False
+        self.GENERATES_THREAT = True
+        self.IS_PASSIVE = False
         self.IS_INTERRUPT = False
         self.IS_DODGEABLE = False
         self.IS_CRITABLE = True
+        self.REQUIRES_IN_COMBAT = True
+        self.REQUIRES_OUT_OF_COMBAT = True
+        self.REMOVES_STEALTH = True
+        self.REQUIRES_TARGET = False
+        self.REQUIRES_TARGET_OUT_OF_COMBAT = False
+        self.REQUIRES_STEALTH = False
 
         self.prefix = f"## {self.name}\n"
         self.enemy_prefix = (
@@ -81,7 +85,7 @@ class Skill:
         damage = self.damage_factor * self.entity.get_attack_damage()
         acc = self.entity.get_ACC()
 
-        attack = Attack(damage, acc)
+        attack = Attack(damage, acc, source=self.name)
         attack.is_interrupt = self.IS_INTERRUPT
         attack.is_dodgeable = self.IS_DODGEABLE
         attack.is_critable = self.IS_CRITABLE

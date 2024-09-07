@@ -1,10 +1,10 @@
-from game.states.state import State
+from game.states.crowd_control_states.crowd_control_state import Crowd_Control_State
 from random import shuffle
 
 from utils.constants import COLOR_YELLOW
 
 
-class DisorientedState(State):
+class DisorientedState(Crowd_Control_State):
     def __init__(self, entity, timeout):
         super().__init__(entity)
 
@@ -13,7 +13,6 @@ class DisorientedState(State):
         self.is_movement_locked = True
         self.time_remaining = timeout
 
-        self.IS_STATUS_EFFECT = True
         self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
     def OnUpdate(self):
@@ -53,4 +52,4 @@ class DisorientedState(State):
         self.Exit()
 
     def OnExit(self, canceled=False):
-        self.entity.notify("You are no longer disoriented.", COLOR_YELLOW)
+        self.entity.notify("### You are no longer disoriented.", COLOR_YELLOW)

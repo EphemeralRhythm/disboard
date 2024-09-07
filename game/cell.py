@@ -1,5 +1,5 @@
 import json
-from game.entities.player import Player
+from game.entities.player.player import Player
 from game.entities.entity import Entity
 from game.utils import distance
 

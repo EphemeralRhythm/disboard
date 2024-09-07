@@ -1,9 +1,10 @@
+from game.states.crowd_control_states.crowd_control_state import Crowd_Control_State
 from game.states.state import State
 
 from utils.constants import COLOR_YELLOW
 
 
-class StunnedState(State):
+class StunnedState(Crowd_Control_State):
     def __init__(self, entity, timeout):
         super().__init__(entity)
 
@@ -11,8 +12,6 @@ class StunnedState(State):
         self.action_name = "stunned"
         self.is_movement_locked = True
         self.time_remaining = timeout
-
-        self.IS_STATUS_EFFECT = True
 
     def OnUpdate(self):
         print(f"{self.entity} is stunned. {self.time_remaining} remaining.")
@@ -22,4 +21,4 @@ class StunnedState(State):
             self.Exit()
 
     def OnExit(self, canceled=False):
-        self.entity.notify("You are no longer stunned.", COLOR_YELLOW)
+        self.entity.notify("### You are no longer stunned.", COLOR_YELLOW)

@@ -129,9 +129,3 @@ class Player(Entity):
                 }
             },
         )
-
-    def get_stunned(self, time):
-        super().get_stunned(time / 2)
-
-    def get_disoriented(self, time):
-        super().get_disoriented(time / 2)

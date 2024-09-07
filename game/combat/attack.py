@@ -1,5 +1,5 @@
 class Attack:
-    def __init__(self, damage, acc, enemy_str="", attacker=None):
+    def __init__(self, damage, acc, source: str, enemy_str="", attacker=None):
 
         self.damage = damage
         self.acc = acc

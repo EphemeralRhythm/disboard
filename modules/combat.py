@@ -2,9 +2,14 @@ import discord
 import asyncio
 
 from utils.constants import COLOR_BLUE
+from typing import TYPE_CHECKING, List
+
+if TYPE_CHECKING:
+    from game.entities.player.player import Player
+    from game.entities.entity import Entity
 
 
-async def get_location(client, ctx, player, prompt, max_range=0):
+async def get_location(client, ctx, player: "Player", prompt, max_range=0):
     await ctx.send(prompt)
 
     def check(m: discord.Message):
@@ -39,7 +44,7 @@ async def get_location(client, ctx, player, prompt, max_range=0):
 
 
 async def get_accessible_location(
-    client, ctx, player, prompt="Enter the location", max_range=0
+    client, ctx, player: "Player", prompt="Enter the location", max_range=0
 ):
     loc = await get_location(client, ctx, player, prompt, max_range)
 
@@ -70,7 +75,9 @@ async def get_accessible_location(
     return (nx, ny)
 
 
-async def send_target_select(client, targets, player, ctx, title):
+async def send_target_select(
+    client, targets: List["Entity"], player: "Player", ctx, title
+) -> "Entity | None":
 
     embed = discord.Embed(title=title, color=COLOR_BLUE)
     if targets:
@@ -102,7 +109,7 @@ async def send_target_select(client, targets, player, ctx, title):
     return targets[index - 1]
 
 
-async def get_skills_embed(player, ctx, client):
+async def get_skills_embed(player: "Player", ctx, client):
     embed = discord.Embed(title="Player Skills", color=COLOR_BLUE)
 
     if not player.skills:
@@ -137,8 +144,22 @@ async def get_skills_embed(player, ctx, client):
             await ctx.send(f"Unable to use this skill while {state.action_name}.")
             return None
 
-        if player.is_in_combat() and not skill.ALLOW_IN_COMBAT:
+        if player.is_in_combat() and not skill.REQUIRES_OUT_OF_COMBAT:
             await ctx.send("Unable to use this skill while in combat.")
+            return None
+
+        if not player.is_in_combat() and skill.REQUIRES_IN_COMBAT:
+            await ctx.send("This skill requires you to be in combat.")
+            return None
+
+        if not player.is_stealthed() and skill.REQUIRES_STEALTH:
+            await ctx.send("This skill requires being in stealth.")
+            return None
+
+        if player.is_stealthed() and not (
+            skill.ALLOW_WHILE_STEALTHED or skill.REQUIRES_STEALTH
+        ):
+            await ctx.send("This skill can not be used while in steath.")
             return None
 
     except asyncio.TimeoutError:

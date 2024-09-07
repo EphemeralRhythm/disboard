@@ -123,8 +123,11 @@ class Entity:
         self.is_moving = False
         self.is_attacking = False
 
-        if self.combat_timeout != 0:
+        if t := self.combat_timeout != 0:
             self.combat_timeout -= 1
+
+            if t == 1:
+                self.on_leave_combat()
 
         self.stateManager.update()
 
@@ -207,6 +210,21 @@ class Entity:
 
         return rate
 
+    def on_critical(self, source: str):
+        pass
+
+    def enter_combat(self):
+        if self.combat_timeout == 0:
+            self.on_enter_combat()
+
+        self.combat_timeout = self.combat_cooldown
+
+    def on_enter_combat(self):
+        pass
+
+    def on_leave_combat(self):
+        pass
+
     def get_aggro_factor(self):
         aggro = self.aggro_factor
 
@@ -237,7 +255,7 @@ class Entity:
             f"### {icons_emoji['attack']} You were attacked by {self.get_name()}\n"
         )
 
-        attack = Attack(self.get_attack_damage(), self.get_ACC())
+        attack = Attack(self.get_attack_damage(), self.get_ACC(), source="auto attack")
         attack.enemy_str = enemy_str
         attack.attacker = self
 
@@ -282,9 +300,13 @@ class Entity:
 
             damage *= attack.crit_multiplier
 
-        enemy.HP -= damage
-        self_str += f"- **Damage Dealt:** {damage}\n"
-        enemy_str += f"- **Damage Received:** {damage}\n"
+        if damage != 0:
+            enemy.HP -= damage
+            self_str += f"- **Damage Dealt:** {damage}\n"
+            enemy_str += f"- **Damage Received:** {damage}\n"
+
+            enemy.on_take_damage()
+            self.enter_combat()
 
         hp_str = f"- **HP Remaining:** {enemy.HP}/{enemy.MAX_HP}, ({int(enemy.HP / enemy.MAX_HP * 100)} %)\n"
 
@@ -324,16 +346,13 @@ class Entity:
             enemy.die()
             self_str += "- **Target Eliminated**\n"
 
-        else:
-            enemy.on_take_damage()
-
         return self_str
 
     def heal(self, heal_amount):
         self.HP = min(self.MAX_HP, self.HP + heal_amount)
 
     def on_take_damage(self):
-        self.combat_timeout = self.combat_cooldown
+        self.enter_combat()
 
         for effect in self.status_effects:
             effect.OnTakeDamage()

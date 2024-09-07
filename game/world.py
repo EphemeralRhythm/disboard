@@ -6,8 +6,10 @@ import utils.database as db
 
 from game.cell import Cell
 
-from game.entities.player import Player
+from game.entities.player.player import Player
 from models.interface.discord_event import DiscordEvent
+
+import importlib
 
 
 class World:
@@ -45,7 +47,13 @@ class World:
             player.update()
 
     def add_player(self, post):
-        player = Player(self, post)
+        player_class_name = post["class"]
+        module = importlib.import_module(
+            f"game.entities.player.classes.{player_class_name}"
+        )
+
+        player_class = getattr(module, player_class_name.title())
+        player = player_class(self, post)
 
         r = player.grid_r
         c = player.grid_c
