@@ -1,3 +1,10 @@
+from typing import TYPE_CHECKING, Optional, List
+
+if TYPE_CHECKING:
+    from game.status_effects.status_effect import StatusEffect
+    from game.states.crowd_control_states.crowd_control_state import Crowd_Control_State
+
+
 class Attack:
     def __init__(self, damage, acc, source: str, enemy_str="", attacker=None):
 
@@ -13,8 +20,8 @@ class Attack:
         self.is_interrupt = False
         self.is_critable = True
 
-        self.status_effects = []
-        self.crowd_control_state = None
+        self.status_effects: "List[StatusEffect]" = []
+        self.crowd_control_state: "Optional[Crowd_Control_State]" = None
 
         self.enemy_str = enemy_str
         self.attacker = attacker

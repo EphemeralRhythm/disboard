@@ -7,8 +7,9 @@ class Assassinate(EntityTargetSkill):
 
         self.active_time = 1
         self.casting_time = 1
-        self.damage_factor = 4
+        self.damage_factor = 4.2
         self.range = 16
+        self.mana_required = 10000
 
     def effect(self):
         self.single_target_attack()

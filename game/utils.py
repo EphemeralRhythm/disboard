@@ -1,3 +1,4 @@
+from enum import Enum
 import random
 
 
@@ -20,3 +21,6 @@ def randomize(number: int, percentage: int):
 
 def random_roll(chance: int):
     return random.randint(1, 100) <= chance
+
+
+ATTAK_TYPES = Enum("type", ["PHYSICAL", "MAGICAL"])

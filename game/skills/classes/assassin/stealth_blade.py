@@ -17,6 +17,7 @@ class StealthBlade(EntityTargetSkill):
         self.range = 16
 
         self.REQUIRES_STEALTH = True
+        self.mana_gained = 2000
 
     def effect(self):
         self.crowd_control_state = StunnedState(self.target, self.effect_time)

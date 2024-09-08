@@ -7,3 +7,4 @@ class Assassin(Player):
 
     def on_leave_combat(self):
         self.MP = 0
+        self.MAX_MP = 12000

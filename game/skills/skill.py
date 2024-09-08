@@ -1,5 +1,7 @@
 from game.command import Command
 from game.combat.attack import Attack
+from game.utils import distance
+from copy import deepcopy
 
 from typing import TYPE_CHECKING
 
@@ -27,6 +29,7 @@ class Skill:
 
         self.use_range = 15 * 16
         self.range = 16
+        self.impact_range = 1
 
         self.casting_time = 1
         self.casting_timeout = 0
@@ -109,6 +112,33 @@ class Skill:
 
         attack = self.init_primary_attack()
         notification = self.prefix + self.entity.attack(self.target, attack)
+        self.entity.notify(notification, COLOR_BLUE)
+
+    def multi_target_attack(self):
+        if not self.entity.cell:
+            return
+
+        targets = list(
+            filter(
+                lambda enemy: distance(self.entity, enemy) <= self.impact_range * 16,
+                self.entity.cell.get_targetable_entities(self.entity),
+            )
+        )
+
+        attack = self.init_primary_attack()
+        notification = self.prefix
+
+        for target in targets:
+            a: Attack = deepcopy(attack)
+
+            for effect in a.status_effects:
+                effect.entity = target
+
+            if a.crowd_control_state:
+                a.crowd_control_state.entity = target
+
+            notification += self.entity.attack(target, attack)
+
         self.entity.notify(notification, COLOR_BLUE)
 
     def cast(self):

@@ -13,6 +13,10 @@ class StatusEffect:
         self.silenced = False
         self.lock = False
 
+        self.IS_HARMFUL = False
+        self.IS_MOVEMENT_IMPAIRING = False
+        self.MAX_STACKS = 1
+
     def update(self):
         """
         returns true is the status effect expired
