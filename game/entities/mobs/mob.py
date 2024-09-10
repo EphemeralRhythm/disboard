@@ -15,9 +15,14 @@ class Mob(Entity):
         self.damage_table = {}
 
     def get_targets(self):
+        if not self.cell:
+            return []
         return self.cell.players
 
     def update_enemies(self):
+        if not self.cell:
+            return
+
         self.enemies_within_radius.clear()
         players = self.cell.players
 

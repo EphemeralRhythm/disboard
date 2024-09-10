@@ -8,7 +8,7 @@ class StealthBlade(EntityTargetSkill):
     """
 
     def __init__(self, entity):
-        super().__init__("Stealth Blade", 10, entity)
+        super().__init__("Stealth Blade", 1, entity)
 
         self.active_time = 1
         self.casting_time = 1

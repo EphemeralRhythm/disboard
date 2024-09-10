@@ -3,10 +3,12 @@ from game.status_effects.debuffs.poison import PoisonStatusEffect
 
 
 class VenomStrike(EntityTargetSkill):
-    """ """
+    """
+    Strike your target with a poisoned blade, deeling (310 % attack damage) over 6 ticks.
+    """
 
     def __init__(self, entity):
-        super().__init__("Grim Slash", 10, entity)
+        super().__init__("Venom Strike", 7, entity)
 
         self.active_time = 1
         self.casting_time = 1

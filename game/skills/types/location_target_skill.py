@@ -9,7 +9,7 @@ class LocationTargetSkill(Skill):
 
         self.range = 15 * 16
 
-    async def initialize(self, player, ctx, client):
+    async def initialize(self, player, ctx, client, arg=None):
         loc = await get_accessible_location(
             client,
             ctx,

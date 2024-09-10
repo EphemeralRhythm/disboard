@@ -67,7 +67,8 @@ class World:
 
     def init_entities(self):
         slime = Slime(24 * 16, 32 * 16, 0, 0, self)
-        slime.cell.spawn_entity(slime)
+        if slime.cell:
+            slime.cell.spawn_entity(slime)
 
     def has_player(self, id):
         return db.players_collection.find_one({"_id": id}) is not None

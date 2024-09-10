@@ -8,7 +8,7 @@ class GrimSlash(EntityTargetSkill):
     """
 
     def __init__(self, entity):
-        super().__init__("Grim Slash", 10, entity)
+        super().__init__("Grim Slash", 8, entity)
 
         self.active_time = 1
         self.casting_time = 1

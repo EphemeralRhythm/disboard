@@ -27,10 +27,15 @@ class CastState(State):
                 return
 
             if not self.casting:
-                if distance(target, entity) > self.skill.range:
+                if distance(target, entity) > entity.attackRange:
                     if not follow(entity, target):
                         self.Exit()
+                        return
+
+                if distance(target, entity) > entity.attackRange:
                     return
+
+        entity.is_attacking = True
 
         if self.skill.REMOVES_STEALTH:
             self.entity.remove_stealth()

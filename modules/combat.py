@@ -109,7 +109,7 @@ async def send_target_select(
     return targets[index - 1]
 
 
-async def get_skills_embed(player: "Player", ctx, client):
+async def get_skills_embed(player: "Player", ctx, client, info=False):
     embed = discord.Embed(title="Player Skills", color=COLOR_BLUE)
 
     if not player.skills:
@@ -135,6 +135,9 @@ async def get_skills_embed(player: "Player", ctx, client):
 
         skill = player.skills[int(msg.content) - 1]
 
+        if info:
+            return skill
+
         if not skill.is_ready():
             await ctx.send("This skill is not ready yet.")
             return None
@@ -144,7 +147,7 @@ async def get_skills_embed(player: "Player", ctx, client):
             await ctx.send(f"Unable to use this skill while {state.action_name}.")
             return None
 
-        if player.is_in_combat() and not skill.REQUIRES_OUT_OF_COMBAT:
+        if player.is_in_combat() and skill.REQUIRES_OUT_OF_COMBAT:
             await ctx.send("Unable to use this skill while in combat.")
             return None
 
@@ -160,6 +163,10 @@ async def get_skills_embed(player: "Player", ctx, client):
             skill.ALLOW_WHILE_STEALTHED or skill.REQUIRES_STEALTH
         ):
             await ctx.send("This skill can not be used while in steath.")
+            return None
+
+        if player.MP < skill.mana_required:
+            await ctx.send(f"Insufficient mana. Mana required: {skill.mana_required}.")
             return None
 
     except asyncio.TimeoutError:

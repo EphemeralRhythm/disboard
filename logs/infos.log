@@ -1,9 +1,6 @@
-WARNING    - 2024-09-08 21:28:31,270 - client          : PyNaCl is not installed, voice will NOT be supported
-INFO       - 2024-09-08 21:28:31,275 - client          : logging in using static token
-INFO       - 2024-09-08 21:28:32,145 - gateway         : Shard ID None has sent the IDENTIFY payload.
-INFO       - 2024-09-08 21:28:32,408 - gateway         : Shard ID None has connected to Gateway: ["gateway-prd-us-east1-c-0xcz",{"micros":102899,"calls":["id_created",{"micros":975,"calls":[]},"session_lookup_time",{"micros":1593,"calls":[]},"session_lookup_finished",{"micros":15,"calls":[]},"discord-sessions-prd-1-44",{"micros":99222,"calls":["start_session",{"micros":79830,"calls":["discord-api-rpc-678dd6b9fb-fkkn6",{"micros":73246,"calls":["get_user",{"micros":7798},"get_guilds",{"micros":5020},"send_scheduled_deletion_message",{"micros":8},"guild_join_requests",{"micros":1},"authorized_ip_coro",{"micros":27878}]}]},"starting_guild_connect",{"micros":86,"calls":[]},"presence_started",{"micros":306,"calls":[]},"guilds_started",{"micros":165,"calls":[]},"guilds_connect",{"micros":1,"calls":[]},"presence_connect",{"micros":18809,"calls":[]},"connect_finished",{"micros":18813,"calls":[]},"build_ready",{"micros":16,"calls":[]},"clean_ready",{"micros":1,"calls":[]},"optimize_ready",{"micros":0,"calls":[]},"split_ready",{"micros":1,"calls":[]}]}]}] (Session ID: 8cfd60215dd8ec76e6b60310462d4f60).
-INFO       - 2024-09-08 21:28:34,448 - schwi           : User: Shiroe#8596 (ID: 1271777576024801352)
-INFO       - 2024-09-08 21:59:09,383 - client          : Cleaning up tasks.
-INFO       - 2024-09-08 21:59:09,383 - client          : Cleaning up after 2 tasks.
-INFO       - 2024-09-08 21:59:09,385 - client          : All tasks finished cancelling.
-INFO       - 2024-09-08 21:59:09,386 - client          : Closing the event loop.
+WARNING    - 2024-09-10 23:07:16,493 - client          : PyNaCl is not installed, voice will NOT be supported
+INFO       - 2024-09-10 23:07:16,494 - client          : logging in using static token
+INFO       - 2024-09-10 23:07:18,537 - client          : Cleaning up tasks.
+INFO       - 2024-09-10 23:07:18,538 - client          : Cleaning up after 1 tasks.
+INFO       - 2024-09-10 23:07:18,539 - client          : All tasks finished cancelling.
+INFO       - 2024-09-10 23:07:18,539 - client          : Closing the event loop.

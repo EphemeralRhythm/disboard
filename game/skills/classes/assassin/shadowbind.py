@@ -19,5 +19,5 @@ class Shadowbind(EntityTargetSkill):
         self.REQUIRES_TARGET_OUT_OF_COMBAT = True
 
     def effect(self):
-        self.crowd_control_state = SleepState(self.target, 10)
+        self.crowd_control_state = SleepState(self.target, 5)
         self.single_target_attack()

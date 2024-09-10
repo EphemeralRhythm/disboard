@@ -78,14 +78,21 @@ class Controller(commands.Cog):
             await ctx.send(embed=embed)
 
     @commands.command(name="skills", aliases=["s"])
-    async def skills(self, ctx):
+    async def skills(self, ctx, arg=None):
         if not (player := await check_player_alive(self.client, ctx)):
             return
 
-        skill = await get_skills_embed(player, ctx, self.client)
+        if arg not in ["c", "n", "info"]:
+            arg = None
 
+        skill = await get_skills_embed(player, ctx, self.client, arg == "info")
         if skill:
-            command = await skill.initialize(player, ctx, self.client)
+            if arg == "info":
+                embed = skill.get_info_embed()
+                await ctx.send(embed=embed)
+                return
+
+            command = await skill.initialize(player, ctx, self.client, arg)
 
             if command:
                 if await check_player_silenced(

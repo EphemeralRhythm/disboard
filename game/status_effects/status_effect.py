@@ -26,6 +26,9 @@ class StatusEffect:
         self.effect()
         return self.remaining_time > 0
 
+    def __repr__(self) -> str:
+        return f"{self.name} - ({self.remaining_time})"
+
     def effect(self):
         pass
 

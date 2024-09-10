@@ -2,8 +2,12 @@ from game.skills.types.entity_target_skill import EntityTargetSkill
 
 
 class PhantomBlink(EntityTargetSkill):
+    """
+    Vanish in a wisp of shadow, and instantly reappear behind an enemey.
+    """
+
     def __init__(self, entity):
-        super().__init__("Phantom Blink", 10, entity)
+        super().__init__("Phantom Blink", 6, entity)
 
         self.active_time = 1
         self.casting_time = 1
@@ -11,11 +15,16 @@ class PhantomBlink(EntityTargetSkill):
         self.use_range = 18
         self.range = 15 * 16
 
+        self.GENERATES_THREAT = False
+        self.ALLOW_WHILE_STEALTHED = True
         self.REMOVES_STEALTH = False
+        self.IS_CRITABLE = False
 
     def effect(self):
         target = self.target
         assert target, "attempted Phantom Blink without a target"
+        if not target.cell:
+            return
 
         grid = target.cell.terrain
 

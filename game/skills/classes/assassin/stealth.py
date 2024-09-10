@@ -16,6 +16,9 @@ class Stealth(InplaceSkill):
 
         self.ALLOW_WHILE_STEALTHED = True
         self.REQUIRES_OUT_OF_COMBAT = True
+        self.GENERATES_THREAT = False
+        self.REMOVES_STEALTH = False
+        self.IS_CRITABLE = False
 
     def effect(self):
         e = StealthStatusEffect(self.entity, self.effect_time)

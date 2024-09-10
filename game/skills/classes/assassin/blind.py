@@ -8,7 +8,7 @@ class Blind(EntityTargetSkill):
     """
 
     def __init__(self, entity):
-        super().__init__("Blind", 15, entity)
+        super().__init__("Blind", 30, entity)
 
         self.active_time = 1
         self.casting_time = 1

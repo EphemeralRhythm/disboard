@@ -4,17 +4,22 @@ from game.status_effects.skills.stealth import StealthStatusEffect
 
 class Vanish(InplaceSkill):
     """
-    Allows you to vanish from sight, entering stealth while in combat. For the first 3 ticks after vanishing, damage and harmful effects received will not break stealth. Also breaks movement impairing effects.
+    Allows you to vanish from sight, entering stealth while in combat.
+
+    For the first 3 ticks after vanishing, damage and harmful effects received will not break stealth.
+    Also breaks movement impairing effects.
     """
 
     def __init__(self, entity):
-        super().__init__("Stealth", 15, entity)
+        super().__init__("Vanish", 12, entity)
 
         self.active_time = 1
         self.casting_time = 1
         self.effect_time = 600
 
-        self.REQUIRES_OUT_OF_COMBAT = True
+        self.GENERATES_THREAT = False
+        self.REMOVES_STEALTH = False
+        self.IS_CRITABLE = False
 
     def effect(self):
         self.entity.status_effects = list(

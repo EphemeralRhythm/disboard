@@ -2,7 +2,13 @@ import discord
 from discord.ext import commands
 from modules.map_ui import draw_map
 
-from modules.game import check_player_alive
+from modules.game import check_player_alive, check_player
+from utils.constants import COLOR_CYAN
+
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from game.entities.player.player import Player
 
 
 class Interface(commands.Cog):
@@ -23,6 +29,27 @@ class Interface(commands.Cog):
         image.save(path)
 
         await ctx.reply(file=discord.File(path))
+
+    @commands.command(name="status")
+    async def status(self, ctx):
+        player = await check_player_alive(self.client, ctx)
+
+        if not player:
+            return
+
+        embed = discord.Embed(title=f"{ctx.author.name}", color=COLOR_CYAN)
+
+        embed.add_field(
+            name="Health",
+            value=f"{player.HP}/{player.MAX_HP} ({int(player.HP / player.MAX_HP * 100)} %)",
+        )
+
+        embed.add_field(
+            name="Mana",
+            value=f"{player.MP}/{player.MAX_MP} ({int(player.MP / player.MAX_MP * 100)} %)",
+        )
+
+        await ctx.send(embed=embed)
 
 
 def setup(client):

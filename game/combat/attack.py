@@ -3,10 +3,13 @@ from typing import TYPE_CHECKING, Optional, List
 if TYPE_CHECKING:
     from game.status_effects.status_effect import StatusEffect
     from game.states.crowd_control_states.crowd_control_state import Crowd_Control_State
+    from game.skills.skill import Skill
 
 
 class Attack:
-    def __init__(self, damage, acc, source: str, enemy_str="", attacker=None):
+    def __init__(
+        self, damage, acc, source: "Optional[Skill]", enemy_str="", attacker=None
+    ):
 
         self.damage = damage
         self.acc = acc
@@ -27,3 +30,6 @@ class Attack:
         self.attacker = attacker
 
         self.variance = 10
+
+        self.source = source
+        self.did_crit = False

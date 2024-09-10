@@ -1,5 +1,5 @@
 import random
-from typing import List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Optional
 
 from game.states.entityStates.idleState import IdleState
 from game.states.crowd_control_states.stunned_state import StunnedState
@@ -123,10 +123,10 @@ class Entity:
         self.is_moving = False
         self.is_attacking = False
 
-        if t := self.combat_timeout != 0:
+        if self.combat_timeout != 0:
             self.combat_timeout -= 1
 
-            if t == 1:
+            if self.combat_timeout == 0:
                 self.on_leave_combat()
 
         self.stateManager.update()
@@ -210,7 +210,7 @@ class Entity:
 
         return rate
 
-    def on_critical(self, source: str):
+    def on_attack(self, attack: "Attack"):
         pass
 
     def enter_combat(self):
@@ -255,7 +255,7 @@ class Entity:
             f"### {icons_emoji['attack']} You were attacked by {self.get_name()}\n"
         )
 
-        attack = Attack(self.get_attack_damage(), self.get_ACC(), source="auto attack")
+        attack = Attack(self.get_attack_damage(), self.get_ACC(), source=None)
         attack.enemy_str = enemy_str
         attack.attacker = self
 
@@ -276,6 +276,7 @@ class Entity:
         pass
 
     def attack(self, enemy: "Entity", attack: Attack) -> str:
+        self.enter_combat()
 
         self_str = f"### ■ {enemy.get_name().title()}\n"
         enemy_str = attack.enemy_str
@@ -299,6 +300,7 @@ class Entity:
             enemy_str += "- **Critical Hit!**\n"
 
             damage *= attack.crit_multiplier
+            attack.did_crit = True
 
         if damage != 0:
             enemy.HP -= damage
@@ -306,7 +308,8 @@ class Entity:
             enemy_str += f"- **Damage Received:** {damage}\n"
 
             enemy.on_take_damage()
-            self.enter_combat()
+
+        self.on_attack(attack)
 
         hp_str = f"- **HP Remaining:** {enemy.HP}/{enemy.MAX_HP}, ({int(enemy.HP / enemy.MAX_HP * 100)} %)\n"
 
