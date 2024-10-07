@@ -15,7 +15,7 @@ class EntityTargetSkill(Skill):
         self.REQUIRES_TARGET = True
 
     def get_targets(self, client, player, x, y) -> List["Entity"]:
-        return client.world.get_targetable_entities(player, x, y)
+        return super().get_enemies(client, player, x, y)
 
     async def initialize(self, player, ctx, client, arg=None):
 

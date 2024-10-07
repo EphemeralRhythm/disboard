@@ -1,8 +1,8 @@
-from game.skills.types.entity_target_skill import EntityTargetSkill
+from game.skills.types.inplace_skill import InplaceSkill
 from game.states.crowd_control_states.disoriented_state import DisorientedState
 
 
-class Blind(EntityTargetSkill):
+class Blind(InplaceSkill):
     """
     Blind all the enemies around you for 8 seconds.
     """

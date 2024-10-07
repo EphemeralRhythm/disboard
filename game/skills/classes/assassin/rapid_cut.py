@@ -11,7 +11,6 @@ class RapidCut(EntityTargetSkill):
 
         self.active_time = 1
         self.casting_time = 1
-        self.effect_time = 4
         self.damage_factor = 0.7
         self.range = 16
 

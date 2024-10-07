@@ -1,10 +1,11 @@
+from game.combat.support import Support
 from game.command import Command
 from game.combat.attack import Attack
 from game.utils import distance
 from copy import deepcopy
 import discord
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 from utils.constants import COLOR_BLUE, COLOR_CYAN
 
@@ -51,6 +52,8 @@ class Skill:
         self.damage_factor = 1
         self.effect_time = 1
 
+        self.heal_factor = 1
+
         self.crit_rate = 10
         self.crit_multiplier = 1.3
 
@@ -82,6 +85,9 @@ class Skill:
         self.level = level
         self.init_skill_level()
 
+        self.support_heal = 0
+        self.support_mana = 0
+
     def init_skill_level(self):
         pass
 
@@ -106,6 +112,15 @@ class Skill:
 
         return attack
 
+    def init_support(self) -> Support:
+        heal = self.support_heal
+        mana = self.support_mana
+
+        sprt = Support(heal, mana, self)
+        sprt.status_effects = self.status_effects
+
+        return sprt
+
     def notify_mana(self) -> str:
         notification = "\n## Mana"
         notification += f"\nMana gained: {self.mana_gained}"
@@ -125,8 +140,18 @@ class Skill:
 
         self.entity.notify(notification, COLOR_BLUE)
 
+    def single_target_support(self):
+        if not self.target:
+            self.entity.idle()
+            return
+
+        sprt = self.init_support()
+
+        self.entity.support(self.target, sprt)
+
     def multi_target_attack(self):
         if not self.entity.cell:
+            self.entity.idle()
             return
 
         targets = list(
@@ -153,6 +178,32 @@ class Skill:
         if self.mana_gained != 0:
             notification += self.notify_mana()
         self.entity.notify(notification, COLOR_BLUE)
+
+        return targets
+
+    def multi_target_support(self):
+        if not self.entity.cell:
+            self.entity.idle()
+            return
+
+        targets = list(
+            filter(
+                lambda e: distance(self.entity, e) <= self.impact_range * 16,
+                self.entity.cell.get_allied_entities(self.entity),
+            )
+        )
+
+        sprt = self.init_support()
+
+        for target in targets:
+            a: Support = deepcopy(sprt)
+
+            for effect in a.status_effects:
+                effect.entity = target
+
+            self.entity.support(target, a)
+
+        return targets
 
     def cast(self):
         assert self.casting, "Attempted to update before casting started"
@@ -255,3 +306,9 @@ class Skill:
 
         embed.description = description
         return embed
+
+    def get_enemies(self, client, player, x, y) -> List["Entity"]:
+        return client.world.get_targetable_entities(player, x, y)
+
+    def get_allies(self, client, player, x, y) -> List["Entity"]:
+        return client.world.get_targetable_entities(player, x, y)

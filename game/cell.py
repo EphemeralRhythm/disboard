@@ -81,3 +81,24 @@ class Cell:
         entities.sort(key=lambda x: distance(player, x))
 
         return entities
+
+    def get_allied_entities(self, player: Player, x=0, y=0, reach=5):
+        x = player.x + x * 16
+        y = player.y - y * 16
+
+        def is_valid(e: Entity):
+            if e.dead:
+                return False
+
+            if abs(x - e.x) + abs(y - e.y) > 16 * reach:
+                return False
+
+            if isinstance(e, Player):
+                return e.id != player.id and player.is_ally(e)
+
+            return e.hostility_level == Entity.HOSTILITY_LEVEL_FRIENDLY
+
+        entities = list(filter(is_valid, self.get_all_entities()))
+        entities.sort(key=lambda x: distance(player, x))
+
+        return entities

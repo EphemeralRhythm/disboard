@@ -9,6 +9,8 @@ class PoisonStatusEffect(StatusEffect):
         self.silenced = True
         self.damage = int(damage / time)
 
+        self.IS_HARMFUL = True
+
     def effect(self):
         damage = self.entity.calculate_damage_dealt(self.damage)
         self.entity.HP -= damage

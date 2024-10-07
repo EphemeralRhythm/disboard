@@ -9,6 +9,7 @@ from game.states.stateManager import StateManager
 
 from game.utils import randomize, random_roll
 from game.combat.attack import Attack
+from game.combat.support import Support
 
 from utils.constants import (
     COLOR_CYAN,
@@ -61,6 +62,8 @@ class Entity:
         self.ACC = 10
         self.DEF = 10
         self.CRIT = 30
+        self.HEAL = 10
+
         self.attackRange = 16
         self.CRIT_MULTIPLIER = 1.5
 
@@ -141,6 +144,9 @@ class Entity:
         self.status_effects = effects
 
     def idle(self):
+        """
+        return the entity to idle state
+        """
         self.stateManager.changeState(self.idleState)
 
     def interrupt(self, entity=None):
@@ -275,15 +281,23 @@ class Entity:
     def gain_aggro(self, aggro: int, entity: "Entity"):
         pass
 
-    def attack(self, enemy: "Entity", attack: Attack) -> str:
+    def support(self, entity: "Entity", sprt: "Support"):
+        entity.heal(sprt.heal)
+
+        entity.gain_MP(sprt.mana)
+
+        for effect in sprt.status_effects:
+            entity.add_status_effect(effect)
+
+    def attack(self, enemy: "Entity", atk: Attack) -> str:
         self.enter_combat()
 
         self_str = f"### ■ {enemy.get_name().title()}\n"
-        enemy_str = attack.enemy_str
+        enemy_str = atk.enemy_str
 
-        is_crit = random_roll(attack.crit_rate) and attack.is_critable
+        is_crit = random_roll(atk.crit_rate) and atk.is_critable
 
-        did_dodge = attack.is_dodgeable and (not is_crit) and enemy.roll_DODGE(self.ACC)
+        did_dodge = atk.is_dodgeable and (not is_crit) and enemy.roll_DODGE(self.ACC)
 
         if did_dodge:
             self_str += "- **Dodged the attack**"
@@ -292,15 +306,15 @@ class Entity:
 
             return self_str
 
-        damage = randomize(attack.damage, attack.variance)
+        damage = randomize(atk.damage, atk.variance)
         damage = enemy.calculate_damage_dealt(damage)
 
         if is_crit:
             self_str += "- **Critical Hit!**\n"
             enemy_str += "- **Critical Hit!**\n"
 
-            damage *= attack.crit_multiplier
-            attack.did_crit = True
+            damage *= atk.crit_multiplier
+            atk.did_crit = True
 
         if damage != 0:
             enemy.HP -= damage
@@ -309,21 +323,21 @@ class Entity:
 
             enemy.on_take_damage()
 
-        self.on_attack(attack)
+        self.on_attack(atk)
 
         hp_str = f"- **HP Remaining:** {enemy.HP}/{enemy.MAX_HP}, ({int(enemy.HP / enemy.MAX_HP * 100)} %)\n"
 
         self_str += hp_str
         enemy_str += hp_str
 
-        status_effects = attack.status_effects
-        crowd_control = attack.crowd_control_state
+        status_effects = atk.status_effects
+        crowd_control = atk.crowd_control_state
 
-        if attack.is_interrupt:
-            if enemy.interrupt(attack.attacker):
+        if atk.is_interrupt:
+            if enemy.interrupt(atk.attacker):
                 self_str += "- **Interrupted casting**\n"
 
-        enemy.gain_aggro(int(damage * attack.aggro_factor), self)
+        enemy.gain_aggro(int(damage * atk.aggro_factor), self)
 
         if status_effects:
             status_effects_str = "- **Status Effects:** "
@@ -371,11 +385,11 @@ class Entity:
 
         del self
 
-    def lose_MP(self, amount):
+    def lose_MP(self, amount: int):
         assert self.MP >= amount, "tried to subtract more mana than the entity has"
         self.MP -= amount
 
-    def gain_MP(self, amount):
+    def gain_MP(self, amount: int):
         self.MP = min(self.MAX_MP, self.MP + amount)
 
     def notify(self, description, color=COLOR_YELLOW):

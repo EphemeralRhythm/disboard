@@ -8,7 +8,13 @@ if TYPE_CHECKING:
 
 class Attack:
     def __init__(
-        self, damage, acc, source: "Optional[Skill]", enemy_str="", attacker=None
+        self,
+        damage,
+        acc,
+        source: "Optional[Skill]",
+        enemy_str="",
+        attacker=None,
+        enemy=None,
     ):
 
         self.damage = damage
@@ -28,6 +34,7 @@ class Attack:
 
         self.enemy_str = enemy_str
         self.attacker = attacker
+        self.enemy = enemy
 
         self.variance = 10
 
