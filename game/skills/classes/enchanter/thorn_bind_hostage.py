@@ -1,5 +1,7 @@
 from game.skills.types.entity_target_skill import EntityTargetSkill
-from game.status_effects.specific.thorn_bind_hostage import ThornBindHostageStatusEffect
+from game.status_effects.specific.enchanter.thorn_bind_hostage import (
+    ThornBindHostageStatusEffect,
+)
 
 
 class ThornBindHostage(EntityTargetSkill):

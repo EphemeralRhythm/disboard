@@ -21,8 +21,10 @@ class ForceStep(EntityTargetSkill):
         self.effect_time = 10
         self.range = 4 * 16
 
+        self.mana_required = 2000
+
     def get_targets(self, client, player, x, y) -> List["Entity"]:
-        return client.world.get_allied_entities(player, x, y)
+        return self.get_allies(client, player, x, y)
 
     def effect(self):
         if not self.target:

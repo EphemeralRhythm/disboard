@@ -6,6 +6,7 @@ class ATKBUffStatusEffect(StatusEffect):
         super().__init__("atk+", entity, time)
         self.remaining_time = time
         self.percent = percent
+        self.atk_modifier = 0
 
     def get_ATK_modifier(self) -> int:
         self.atk_modifier = int(self.entity.ATK * self.percent / 100)

@@ -1,11 +1,11 @@
 from game.skills.types.entity_target_skill import EntityTargetSkill
 
 
-class StormBolt(EntityTargetSkill):
+class Rend(EntityTargetSkill):
     """ """
 
     def __init__(self, entity):
-        super().__init__("Storm Bolt", 10, entity)
+        super().__init__("Rend", 10, entity)
 
         self.active_time = 1
         self.casting_time = 1

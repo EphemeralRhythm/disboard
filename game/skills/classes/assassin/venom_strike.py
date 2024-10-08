@@ -1,10 +1,10 @@
 from game.skills.types.entity_target_skill import EntityTargetSkill
-from game.status_effects.debuffs.poison import PoisonStatusEffect
+from game.status_effects.generic.damage_over_time import DamageOverTimeStatusEffect
 
 
 class VenomStrike(EntityTargetSkill):
     """
-    Strike your target with a poisoned blade, deeling (310 % attack damage) over 6 ticks.
+    Strike your target with a poisoned blade, dealing (250 % attack damage) over 6 ticks.
     """
 
     def __init__(self, entity):
@@ -20,10 +20,11 @@ class VenomStrike(EntityTargetSkill):
 
     def effect(self):
         self.status_effects = [
-            PoisonStatusEffect(
+            DamageOverTimeStatusEffect(
+                "Venom Strike",
                 self.target,
                 self.effect_time,
-                3.1 * self.entity.get_attack_damage(),
+                2.5 * self.entity.get_attack_damage(),
             )
         ]
 

@@ -2,8 +2,8 @@ from game.skills.types.entity_target_skill import EntityTargetSkill
 
 
 class Taunt(EntityTargetSkill):
-    def __init__(self, entity):
-        super().__init__("taunt", 10, entity)
+    def __init__(self, entity, name, cooldown):
+        super().__init__(name, cooldown, entity)
 
         self.active_time = 1
         self.casting_time = 1

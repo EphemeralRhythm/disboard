@@ -57,7 +57,7 @@ class Skill:
         self.crit_rate = 10
         self.crit_multiplier = 1.3
 
-        self.aggro_factor = 1
+        self.aggro_factor = 0
 
         self.status_effects = []
         self.crowd_control_state = None
@@ -103,7 +103,7 @@ class Skill:
         attack.crit_rate = self.crit_rate
         attack.crit_multiplier = self.crit_multiplier
 
-        attack.aggro_factor = self.entity.get_aggro_factor() * self.aggro_factor
+        attack.aggro_factor = self.entity.get_aggro_factor() + self.aggro_factor
 
         attack.enemy_str = self.enemy_prefix
 
@@ -149,14 +149,20 @@ class Skill:
 
         self.entity.support(self.target, sprt)
 
-    def multi_target_attack(self):
+    def multi_target_attack(self, x=0, y=0):
         if not self.entity.cell:
             self.entity.idle()
             return
 
+        def manhattan_distance(a, b):
+            return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
         targets = list(
             filter(
-                lambda enemy: distance(self.entity, enemy) <= self.impact_range * 16,
+                lambda enemy: manhattan_distance(
+                    (self.entity.x + x * 16, self.entity.y + y * 16), (enemy.x, enemy.y)
+                )
+                <= self.impact_range * 16,
                 self.entity.cell.get_targetable_entities(self.entity),
             )
         )

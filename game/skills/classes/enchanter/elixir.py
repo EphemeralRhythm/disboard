@@ -15,6 +15,8 @@ class Elixir(InplaceSkill):
         self.damage_factor = 0
         self.range = 16
 
+        self.mana_gained = 1000
+
     def effect(self):
         self.status_effects = [HealBuffStatusEffect(self.target, 6, 200)]
         targets = self.multi_target_support()

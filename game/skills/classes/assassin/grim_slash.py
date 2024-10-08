@@ -1,10 +1,10 @@
 from game.skills.types.entity_target_skill import EntityTargetSkill
-from game.status_effects.debuffs.bleed import BleedStatusEffect
+from game.status_effects.generic.damage_over_time import DamageOverTimeStatusEffect
 
 
 class GrimSlash(EntityTargetSkill):
     """
-    Slash through the enemy dealing (310% attack damage) bleed damage over 6 ticks.
+    Slash through the enemy dealing (310% attack damage) over 6 ticks.
     """
 
     def __init__(self, entity):
@@ -20,11 +20,11 @@ class GrimSlash(EntityTargetSkill):
 
     def effect(self):
         self.status_effects = [
-            BleedStatusEffect(
+            DamageOverTimeStatusEffect(
+                "Grim Slash",
                 self.target,
                 self.effect_time,
                 3.1 * self.entity.get_attack_damage(),
             )
         ]
-
         self.single_target_attack()

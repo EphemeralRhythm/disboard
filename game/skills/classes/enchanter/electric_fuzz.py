@@ -17,6 +17,8 @@ class ElectricFuzz(EntityTargetSkill):
 
         self.effect_time = 10
 
+        self.mana_gained = 500
+
     def effect(self):
         self.status_effects = [
             DamageOverTimeStatusEffect(

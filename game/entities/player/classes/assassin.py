@@ -7,6 +7,7 @@ class Assassin(Player):
         super().__init__(world, db_post)
 
         self.MAX_MP = 12000
+        self.MP = 0
 
         self.HP = 11360
         self.ATK = 570

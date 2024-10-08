@@ -14,7 +14,7 @@ class LocationTargetSkill(Skill):
             client,
             ctx,
             player,
-            "Enter the location that your want to teleport to",
+            "Enter the location",
             self.use_range,
         )
 

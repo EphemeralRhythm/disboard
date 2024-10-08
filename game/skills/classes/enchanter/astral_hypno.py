@@ -16,6 +16,8 @@ class AstralHypno(EntityTargetSkill):
         self.effect_time = 8
         self.range = 16 * 4
 
+        self.mana_gained = 1000
+
     def effect(self):
         self.crowd_control_state = SleepState(self.target, self.effect_time)
         self.single_target_attack()

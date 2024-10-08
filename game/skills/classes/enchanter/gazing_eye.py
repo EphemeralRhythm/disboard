@@ -17,6 +17,8 @@ class GazingEye(EntityTargetSkill):
         self.effect_time = 10
         self.range = 16
 
+        self.mana_gained = 1000
+
     async def initialize(self, player, ctx, client, arg=None):
         # add condition for head gear
 

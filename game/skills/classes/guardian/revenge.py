@@ -1,11 +1,11 @@
 from game.skills.types.entity_target_skill import EntityTargetSkill
 
 
-class StormBolt(EntityTargetSkill):
+class Revenege(EntityTargetSkill):
     """ """
 
     def __init__(self, entity):
-        super().__init__("Storm Bolt", 10, entity)
+        super().__init__("Revenge", 9, entity)
 
         self.active_time = 1
         self.casting_time = 1
@@ -13,7 +13,6 @@ class StormBolt(EntityTargetSkill):
         self.range = 16
 
         self.mana_gained = 1000
-        self.IS_INTERRUPT = True
 
     def effect(self):
         self.single_target_attack()

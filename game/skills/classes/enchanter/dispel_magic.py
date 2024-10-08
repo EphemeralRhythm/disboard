@@ -22,6 +22,8 @@ class DispelMagic(InplaceSkill):
         self.range = 16
         self.impact_range = 7
 
+        self.mana_required = 2000
+
     def effect(self):
         if not self.entity.cell:
             return

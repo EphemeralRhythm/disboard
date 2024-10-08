@@ -7,6 +7,7 @@ class Enchanter(Player):
         super().__init__(world, db_post)
 
         self.MAX_MP = 12000
+        self.MP = self.MAX_MP
 
         self.HP = 11360
         self.ATK = 570
