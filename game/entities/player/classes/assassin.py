@@ -15,6 +15,7 @@ class Assassin(Player):
 
         self.DEF = 200
         self.CRIT = 40
+        self.DODGE = 0
 
     def on_leave_combat(self):
         self.MP = 0

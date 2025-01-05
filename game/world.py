@@ -46,6 +46,14 @@ class World:
         for player in self.players.values():
             player.update()
 
+    def change_player_class(self, player, new_class):
+        db.players_collection.find_one_and_update(
+            {"_id": player.id}, {"$set": {"class": new_class}}
+        )
+
+        post = db.players_collection.find_one({"_id": player.id})
+        self.add_player(post)
+
     def add_player(self, post):
         player_class_name = post["class"]
         module = importlib.import_module(

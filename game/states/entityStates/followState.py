@@ -4,25 +4,27 @@ from modules.pathfinding import astar
 from game.utils import normalize
 
 
-def follow(entity: Entity, target: Entity):
-    if entity.cell != target.cell:
+def follow(entity: Entity, target: Entity, step=1):
+    if not entity.cell or entity.cell != target.cell:
         return False
 
     grid = entity.cell.terrain
     path = astar((entity.x, entity.y), (target.x, target.y), grid)
 
-    if not path or len(path) == 0:
-        entity.update_location()
-        return entity.x // 16 == target.x // 16 and entity.y // 16 == target.y // 16
+    for i in range(step):
+        if not path or len(path) == 0:
+            entity.update_location()
+            return entity.x // 16 == target.x // 16 and entity.y // 16 == target.y // 16
 
-    entity.dir_x = normalize(path[-1][1] * 16 - entity.x)
-    entity.dir_y = normalize(entity.y - path[-1][0] * 16)
+        entity.dir_x = normalize(path[-1][1] * 16 - entity.x)
+        entity.dir_y = normalize(entity.y - path[-1][0] * 16)
 
-    entity.x = path[0][1] * 16
-    entity.y = path[0][0] * 16
+        entity.x = path[0][1] * 16
+        entity.y = path[0][0] * 16
+
+        path = path[1:]
 
     entity.is_moving = True
-    print(f"{entity} is following {target}.")
 
     return True
 

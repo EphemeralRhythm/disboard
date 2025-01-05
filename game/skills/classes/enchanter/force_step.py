@@ -23,12 +23,11 @@ class ForceStep(EntityTargetSkill):
 
         self.mana_required = 2000
 
-    def get_targets(self, client, player, x, y) -> List["Entity"]:
-        return self.get_allies(client, player, x, y)
+    def get_targets(self, player, x, y) -> List["Entity"]:
+        return self.get_allies(player, x, y)
 
     def effect(self):
         if not self.target:
-            self.entity.idle()
             return
 
         for skill in self.target.skills:

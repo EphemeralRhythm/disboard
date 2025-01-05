@@ -62,6 +62,10 @@ class Skill:
         self.status_effects = []
         self.crowd_control_state = None
 
+        self.boosted = False
+        self.insta_cast = False
+        self.free = False
+
         self.ALLOW_WHILE_STUNNED = False
         self.ALLOW_WHILE_STEALTHED = False
         self.GENERATES_THREAT = True
@@ -159,9 +163,7 @@ class Skill:
 
         targets = list(
             filter(
-                lambda enemy: manhattan_distance(
-                    (self.entity.x + x * 16, self.entity.y + y * 16), (enemy.x, enemy.y)
-                )
+                lambda enemy: manhattan_distance((x, y), (enemy.x, enemy.y))
                 <= self.impact_range * 16,
                 self.entity.cell.get_targetable_entities(self.entity),
             )
@@ -247,9 +249,16 @@ class Skill:
         ), "Attempted to use skill with insufficient mana"
 
         self.casting = True
-        self.casting_timeout = self.casting_time
+        if not self.insta_cast:
+            self.casting_timeout = self.casting_time
+        else:
+            self.casting_timeout = 1
+            self.insta_cast = False
 
-        self.entity.lose_MP(self.mana_required)
+        if not self.free:
+            self.entity.lose_MP(self.mana_required)
+            self.free = False
+
         print(f"{self.entity} is casting {self.name}.")
 
     def activate(self):
@@ -257,6 +266,11 @@ class Skill:
         self.active = True
         self.active_timeout = self.active_time
         self.entity.gain_MP(self.mana_gained)
+
+    def deactivate(self):
+        self.casting = False
+        self.active = False
+        self.cooldown_timeout = self.cooldown
 
     def effect(self):
         raise NotImplementedError()
@@ -313,8 +327,8 @@ class Skill:
         embed.description = description
         return embed
 
-    def get_enemies(self, client, player, x, y) -> List["Entity"]:
-        return client.world.get_targetable_entities(player, x, y)
+    def get_enemies(self, player, x, y) -> List["Entity"]:
+        return player.world.get_targetable_entities(player, x, y)
 
-    def get_allies(self, client, player, x, y) -> List["Entity"]:
-        return client.world.get_targetable_entities(player, x, y)
+    def get_allies(self, player, x, y) -> List["Entity"]:
+        return player.world.get_targetable_entities(player, x, y)

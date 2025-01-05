@@ -9,7 +9,7 @@ class Slime(Mob):
         self.MAX_HP = 10000
         self.LEVEL = 30
 
-        self.ATK = 200
+        self.ATK = 400
         self.ACC = 10
         self.DODGE = 10
         self.size = (32, 32)

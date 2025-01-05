@@ -19,12 +19,11 @@ class ManaSiphon(EntityTargetSkill):
         self.effect_time = 10
         self.range = 16
 
-    def get_targets(self, client, player, x, y) -> List["Entity"]:
-        return self.get_allies(client, player, x, y)
+    def get_targets(self, player, x, y) -> List["Entity"]:
+        return self.get_allies(player, x, y)
 
     def effect(self):
         if not self.target:
-            self.entity.idle()
             return
 
         amount = min(self.entity.MP, self.target.MAX_MP - self.target.MP, 4000)

@@ -23,12 +23,11 @@ class KeenEdge(EntityTargetSkill):
 
         self.mana_gained = 500
 
-    def get_targets(self, client, player, x, y) -> List["Entity"]:
-        return self.get_allies(client, player, x, y)
+    def get_targets(self, player, x, y) -> List["Entity"]:
+        return self.get_allies(player, x, y)
 
     def effect(self):
         if not self.target:
-            self.entity.idle()
             return
 
         self.target.add_status_effect(

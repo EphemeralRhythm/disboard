@@ -8,7 +8,7 @@ class ScarletThrust(EntityTargetSkill):
     def __init__(self, entity):
         super().__init__("Scarlet Thrust", 15, entity)
 
-        self.active_time = 1
+        self.active_time = 20
         self.casting_time = 1
         self.damage_factor = 1.2
         self.range = 16
@@ -17,7 +17,6 @@ class ScarletThrust(EntityTargetSkill):
 
     def effect(self):
         if not self.target:
-            self.entity.idle()
             return
 
         attack = self.init_primary_attack()

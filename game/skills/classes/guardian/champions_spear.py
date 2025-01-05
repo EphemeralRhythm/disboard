@@ -7,13 +7,13 @@ class ChampionsSpear(LocationTargetSkill):
     """
 
     def __init__(self, entity):
-        super().__init__("Champion's Spear", 13, entity)
+        super().__init__("Champion's Spear", 16, entity)
 
         self.active_time = 1
         self.casting_time = 1
-        self.damage_factor = 1
+        self.damage_factor = 2
         self.range = 16 * 9
-        self.impact_range = 5
+        self.impact_range = 10
 
         self.IS_INTERRUPT = True
         self.mana_gained = 1000

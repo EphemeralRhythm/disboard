@@ -6,13 +6,6 @@ from utils.game import UNIT_COLORS, CLASSES
 from game.command import Command
 
 
-async def get_classes(ctx: discord.AutocompleteContext):
-    if ctx.interaction.user.id == 660929334969761792:
-        return ["warrior", "paladin", "thief"]
-    else:
-        return ["mage", "summoner"]
-
-
 class Character(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -39,15 +32,20 @@ class Character(commands.Cog):
 
         await ctx.send("Command added to queue!")
 
-    @commands.slash_command(name="switch", guild_ids=[860943056248242176])
-    async def switch_class(
-        self,
-        ctx: discord.ApplicationContext,
-        classes: discord.Option(
-            str, autocomplete=discord.utils.basic_autocomplete(get_classes)
-        ),
-    ):
-        await ctx.response.send_message(f"You selected class {classes}")
+    @commands.command()
+    async def change_class(self, ctx, arg):
+        player = self.client.world.get_player(str(ctx.author.id))
+
+        if not player:
+            await ctx.send("You are not a part of the game system.")
+            return
+
+        if arg not in CLASSES:
+            await ctx.send("invalid class")
+            return
+
+        self.client.world.change_player_class(player, arg)
+        await ctx.send("done")
 
 
 def setup(client):

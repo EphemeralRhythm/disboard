@@ -5,7 +5,7 @@ from game.status_effects.debuffs.defense_debuff import DefenseDebuffStatusEffect
 class HeroicThrow(EntityTargetSkill):
     """
     Throw your shield at an enemy dealing (85% attack damage).
-    Generates high threat
+    Generates high threat.
     """
 
     def __init__(self, entity):
@@ -14,7 +14,7 @@ class HeroicThrow(EntityTargetSkill):
         self.active_time = 1
         self.casting_time = 1
         self.damage_factor = 1
-        self.aggro_factor = 3
+        self.aggro_factor = 10
         self.effect_time = 10
         self.range = 16 * 4
 

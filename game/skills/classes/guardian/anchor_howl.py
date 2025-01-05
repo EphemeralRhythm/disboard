@@ -22,9 +22,10 @@ class AnchorHowl(InplaceSkill):
         self.impact_range = 4
         self.effect_time = 5
 
+        self.mana_required = 8000
+
     def effect(self):
         if not self.entity.cell:
-            self.entity.idle()
             return
 
         enemies: "List[Entity]" = self.entity.cell.get_targetable_entities(self.entity)

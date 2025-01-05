@@ -11,6 +11,7 @@ from game.utils import randomize, random_roll
 from game.combat.attack import Attack
 from game.combat.support import Support
 
+from modules.combat import get_skills_embed
 from utils.constants import (
     COLOR_CYAN,
     COLOR_GREEN,
@@ -452,3 +453,31 @@ class Entity:
         image_draw.rectangle(
             (node_x + 1, node_y + 1, node_x + hp + 1, node_y + 1), fill=(0, 255, 0)
         )
+
+    def get_skill(self, skill_name):
+        for skill in self.skills:
+            if skill.name == skill_name:
+                return skill
+
+        return False
+
+    def has_skill(self, skill_name):
+        return True if self.get_skill(skill_name) else False
+
+    def has_active_skill(self, skill_name):
+        skill = self.get_skill(skill_name)
+
+        return skill.active if skill else False
+
+    def has_status_effect(self, status_effect_name):
+        for status_effect in self.status_effects:
+            if status_effect.name == status_effect_name:
+                return True
+
+        return False
+
+    def remove_skill_cooldown(self, skill_name):
+        for skill in self.skills:
+            if skill.name == skill_name:
+                skill.cooldown_timeout = 0
+                break

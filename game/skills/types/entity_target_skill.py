@@ -14,8 +14,8 @@ class EntityTargetSkill(Skill):
         super().__init__(name, cooldown, entity)
         self.REQUIRES_TARGET = True
 
-    def get_targets(self, client, player, x, y) -> List["Entity"]:
-        return super().get_enemies(client, player, x, y)
+    def get_targets(self, player, x, y) -> List["Entity"]:
+        return super().get_enemies(player, x, y)
 
     async def initialize(self, player, ctx, client, arg=None):
 
@@ -33,7 +33,7 @@ class EntityTargetSkill(Skill):
 
             x, y = loc
 
-            targets = self.get_targets(client, player, x, y)
+            targets = self.get_targets(player, x, y)
             self.target = await send_target_select(
                 client, targets, player, ctx, self.name.title()
             )
@@ -54,7 +54,7 @@ class EntityTargetSkill(Skill):
             return Command(name="cast", author=player, skill=self)
 
         elif arg == "n":
-            targets = self.get_targets(client, player, 0, 0)
+            targets = self.get_targets(player, 0, 0)
 
             if not targets:
                 await ctx.send("No target found.")

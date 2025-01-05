@@ -26,5 +26,6 @@ class Assassinate(EntityTargetSkill):
     def effect(self):
         mana = self.entity.MP
         self.damage_factor = 2 + mana / 2000
+        self.entity.MP = 0
 
         self.single_target_attack()

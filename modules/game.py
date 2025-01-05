@@ -1,12 +1,19 @@
-async def check_player(client, ctx):
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from game.entities.player.player import Player
+
+
+async def check_player(client, ctx) -> "Optional[Player]":
     player = client.world.get_player(str(ctx.author.id))
     if not player:
         await ctx.send("You are not a part of the game system.")
+        return None
 
     return player
 
 
-async def check_player_alive(client, ctx):
+async def check_player_alive(client, ctx) -> "Optional[Player]":
     player = client.world.get_player(str(ctx.author.id))
     if not player:
         await ctx.send("You are not a part of the game system.")

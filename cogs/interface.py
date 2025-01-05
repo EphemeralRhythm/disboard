@@ -32,7 +32,7 @@ class Interface(commands.Cog):
 
     @commands.command(name="status")
     async def status(self, ctx):
-        player = await check_player_alive(self.client, ctx)
+        player: "Optional[Player]" = await check_player_alive(self.client, ctx)
 
         if not player:
             return
@@ -48,6 +48,22 @@ class Interface(commands.Cog):
             name="Mana",
             value=f"{player.MP}/{player.MAX_MP} ({int(player.MP / player.MAX_MP * 100)} %)",
         )
+
+        embed.add_field(
+            name="Current State",
+            value=player.stateManager.currentState.name,
+            inline=False,
+        )
+
+        description = ""
+
+        if player.status_effects:
+            description += "**Status Effects:**\n"
+            for effect in player.status_effects:
+                description += f"- {effect}\n"
+            description += "\n"
+
+        embed.description = description
 
         await ctx.send(embed=embed)
 

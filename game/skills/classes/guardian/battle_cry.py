@@ -17,4 +17,7 @@ class BattleCry(InplaceSkill):
 
     def effect(self):
         self.status_effects = [DEFBUffStatusEffect(self.target, self.effect_time, 200)]
-        self.multi_target_support()
+        targets = self.multi_target_support()
+
+        notification = "# Battle Cry"
+        self.entity.notify(notification)
